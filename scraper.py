@@ -15,6 +15,7 @@ NOTE: this is scraping, not an official API. Be respectful:
 """
 
 import time
+import io
 import logging
 from dataclasses import dataclass, field
 from typing import Optional
@@ -116,7 +117,7 @@ def fetch_ticker(ticker: str) -> CompanyFundamentals:
     html = _get(f"{base}/")
     if html:
         try:
-            tables = pd.read_html(html)
+            tables = pd.read_html(io.StringIO(html))
             for df in tables:
                 if cf.market_cap is None:
                     cf.market_cap = _first_numeric_row(df, "Market Cap")
@@ -130,7 +131,7 @@ def fetch_ticker(ticker: str) -> CompanyFundamentals:
     html = _get(f"{base}/financials/income-statement/")
     if html:
         try:
-            tables = pd.read_html(html)
+            tables = pd.read_html(io.StringIO(html))
             for df in tables:
                 if cf.revenue is None:
                     cf.revenue = _first_numeric_row(df, "^Revenue$")
@@ -151,7 +152,7 @@ def fetch_ticker(ticker: str) -> CompanyFundamentals:
     html = _get(f"{base}/financials/balance-sheet/")
     if html:
         try:
-            tables = pd.read_html(html)
+            tables = pd.read_html(io.StringIO(html))
             for df in tables:
                 if cf.total_equity is None:
                     cf.total_equity = _first_numeric_row(df, "Total Equity") or _first_numeric_row(df, "Shareholders. Equity")
@@ -169,7 +170,7 @@ def fetch_ticker(ticker: str) -> CompanyFundamentals:
     html = _get(f"{base}/financials/cash-flow-statement/")
     if html:
         try:
-            tables = pd.read_html(html)
+            tables = pd.read_html(io.StringIO(html))
             for df in tables:
                 if cf.operating_cash_flow is None:
                     cf.operating_cash_flow = _first_numeric_row(df, "Operating Cash Flow")
@@ -189,7 +190,7 @@ def fetch_ticker(ticker: str) -> CompanyFundamentals:
     html = _get(f"{base}/financials/ratios/")
     if html:
         try:
-            tables = pd.read_html(html)
+            tables = pd.read_html(io.StringIO(html))
             for df in tables:
                 if cf.ebitda is None:
                     cf.ebitda = _first_numeric_row(df, "EBITDA")
