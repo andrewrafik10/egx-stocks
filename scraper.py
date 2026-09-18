@@ -213,10 +213,28 @@ def fetch_ticker(ticker: str) -> CompanyFundamentals:
 
 
 def fetch_universe(tickers: list) -> dict:
-    """Fetch all tickers, returns {ticker: CompanyFundamentals}. Logs progress."""
+    """Fetch all tickers, returns {ticker: CompanyFundamentals}. Logs progress.
+    Logs a full field dump for the first few tickers so mismatched row-label
+    matching can be diagnosed from the Action log without live access to the site."""
     results = {}
+    DEBUG_DUMP_COUNT = 5
     for i, t in enumerate(tickers, 1):
         log.info(f"[{i}/{len(tickers)}] Fetching {t} ...")
+        cf = fetch_ticker(t)
+        results[t] = cf
+        if i <= DEBUG_DUMP_COUNT:
+            log.info(
+                f"DEBUG {t}: price={cf.price} market_cap={cf.market_cap} "
+                f"shares_out={cf.shares_outstanding} revenue={cf.revenue} "
+                f"net_income={cf.net_income} eps={cf.eps} eps_history={cf.eps_history} "
+                f"total_equity={cf.total_equity} total_debt={cf.total_debt} cash={cf.cash} "
+                f"bvps={cf.book_value_per_share} ocf={cf.operating_cash_flow} "
+                f"capex={cf.capex} fcf={cf.free_cash_flow} fcf_history={cf.fcf_history} "
+                f"ebitda={cf.ebitda}"
+            )
+        if cf.errors:
+            log.warning(f"{t}: {cf.errors}")
+    return results
         results[t] = fetch_ticker(t)
         if results[t].errors:
             log.warning(f"{t}: {results[t].errors}")
