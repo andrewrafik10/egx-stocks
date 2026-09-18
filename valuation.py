@@ -38,9 +38,11 @@ def graham_number(cf: CompanyFundamentals) -> Tuple[Optional[float], str]:
 
 
 def _estimate_growth_rate(history: list, fallback: float = 0.10, cap: float = 0.35) -> float:
-    """CAGR from oldest to newest value in history list, clipped to a sane range."""
+    """CAGR from oldest to newest value in history list, clipped to a sane range.
+    Falls back when either endpoint is non-positive, since a negative-to-positive
+    (or vice versa) swing makes a fractional-power CAGR produce a complex number."""
     vals = [v for v in history if v is not None]
-    if len(vals) < 2 or vals[0] <= 0:
+    if len(vals) < 2 or vals[0] <= 0 or vals[-1] <= 0:
         return fallback
     years = len(vals) - 1
     try:
