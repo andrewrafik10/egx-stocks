@@ -1,2 +1,4 @@
-requests>=2.31pandas>=2.0lxml>=4.9
-openpyxl
+requests>=2.31
+pandas>=2.0
+lxml>=4.9
+openpyxl>=3.1
