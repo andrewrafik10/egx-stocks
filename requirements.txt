@@ -1,1 +1,2 @@
 requests>=2.31pandas>=2.0lxml>=4.9
+openpyxl
