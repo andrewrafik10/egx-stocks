@@ -211,6 +211,19 @@ def fetch_ticker(ticker: str) -> CompanyFundamentals:
     if cf.price is None and cf.market_cap and cf.shares_outstanding:
         cf.price = cf.market_cap / cf.shares_outstanding
 
+    # The financial-statement pages (income statement, balance sheet, cash flow)
+    # express monetary line items in millions, unlike the overview page's summary
+    # cards (which carry explicit B/M/K suffixes already handled by _clean_number).
+    # Per-share figures (EPS, BVPS) and the overview page's price/market_cap are
+    # NOT rescaled here - only aggregate financial-statement dollar figures are.
+    MILLIONS = 1_000_000
+    for attr in ("revenue", "net_income", "total_equity", "total_debt", "cash",
+                 "operating_cash_flow", "capex", "free_cash_flow", "ebitda"):
+        val = getattr(cf, attr)
+        if val is not None:
+            setattr(cf, attr, val * MILLIONS)
+    cf.fcf_history = [v * MILLIONS if v is not None else None for v in cf.fcf_history]
+
     # sanity flags
     if cf.eps is None:
         cf.errors.append("missing EPS")
