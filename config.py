@@ -42,6 +42,15 @@ EGX70_TICKERS = [
 
 ALL_TICKERS = sorted(set(EGX30_TICKERS + EGX70_TICKERS))
 
+# --- Graham Number assumptions ---
+# Classic formula: sqrt(22.5 x EPS x BVPS), where 22.5 = a P/E ceiling of 15
+# times a P/B ceiling of 1.5. Adjusted per your request: P/E ceiling lowered
+# to 5 (more conservative - demands a much cheaper earnings multiple before
+# a stock counts as undervalued), P/B ceiling left at the classic 1.5.
+GRAHAM_PE_CAP = 5
+GRAHAM_PB_CAP = 1.5
+GRAHAM_MULTIPLIER = GRAHAM_PE_CAP * GRAHAM_PB_CAP  # = 7.5
+
 # --- Valuation assumptions ---
 # EGP-denominated, reflecting Egypt's high-inflation environment.
 # TODO: tune these, or better - derive per-sector CAPM inputs like you did
@@ -65,3 +74,4 @@ METHOD_WEIGHTS = {
     "dcf": 0.30,
     "comps": 0.25,
 }
+
