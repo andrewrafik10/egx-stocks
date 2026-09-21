@@ -16,6 +16,7 @@ NOTE: this is scraping, not an official API. Be respectful:
 
 import time
 import io
+import re
 import logging
 from dataclasses import dataclass, field
 from typing import Optional
@@ -93,17 +94,24 @@ def _clean_number(raw) -> Optional[float]:
     s = str(raw).strip()
     if s in ("-", "", "nan", "None"):
         return None
-    neg = s.startswith("(") and s.endswith(")")
-    s = s.strip("()").replace(",", "").replace("%", "")
+    # Pull out just the leading numeric token - handles cells where a growth
+    # badge is concatenated onto the value with no separator, e.g. the overview
+    # page's "Market Cap" cell rendering as "116.79B+75.0%" in one <td>.
+    m = re.match(r'^\(?-?[\d,]*\.?\d+[BMK]?\)?', s)
+    if not m:
+        return None
+    token = m.group(0)
+    neg = token.startswith("(") and token.endswith(")")
+    token = token.strip("()").replace(",", "")
     multiplier = 1
-    if s.endswith("B"):
-        multiplier, s = 1e9, s[:-1]
-    elif s.endswith("M"):
-        multiplier, s = 1e6, s[:-1]
-    elif s.endswith("K"):
-        multiplier, s = 1e3, s[:-1]
+    if token.endswith("B"):
+        multiplier, token = 1e9, token[:-1]
+    elif token.endswith("M"):
+        multiplier, token = 1e6, token[:-1]
+    elif token.endswith("K"):
+        multiplier, token = 1e3, token[:-1]
     try:
-        val = float(s) * multiplier
+        val = float(token) * multiplier
         return -val if neg else val
     except ValueError:
         return None
@@ -139,6 +147,8 @@ def fetch_ticker(ticker: str) -> CompanyFundamentals:
                     cf.net_income = _first_numeric_row(df, "Net Income$") or _first_numeric_row(df, "Net Income to Common")
                 if cf.eps is None:
                     cf.eps = _first_numeric_row(df, "EPS \\(Basic\\)") or _first_numeric_row(df, "EPS \\(Diluted\\)")
+                if cf.ebitda is None:
+                    cf.ebitda = _first_numeric_row(df, "^EBITDA$")
                 # collect EPS across all history columns present for growth-rate estimation
                 eps_mask = df.iloc[:, 0].astype(str).str.contains("EPS \\(Diluted\\)", case=False, na=False)
                 if eps_mask.any():
@@ -193,7 +203,7 @@ def fetch_ticker(ticker: str) -> CompanyFundamentals:
             tables = pd.read_html(io.StringIO(html))
             for df in tables:
                 if cf.ebitda is None:
-                    cf.ebitda = _first_numeric_row(df, "EBITDA")
+                    cf.ebitda = _first_numeric_row(df, "^EBITDA$")
         except ValueError:
             pass
 
@@ -235,3 +245,4 @@ def fetch_universe(tickers: list) -> dict:
         if cf.errors:
             log.warning(f"{t}: {cf.errors}")
     return results
+
