@@ -26,15 +26,16 @@ def pe_valuation(cf: CompanyFundamentals, sector_median_pe: Optional[float]) -> 
 
 
 def graham_number(cf: CompanyFundamentals) -> Tuple[Optional[float], str]:
-    """Classic Benjamin Graham formula: sqrt(22.5 x EPS x BVPS).
+    """Graham formula: sqrt(GRAHAM_MULTIPLIER x EPS x BVPS), where
+    GRAHAM_MULTIPLIER = GRAHAM_PE_CAP x GRAHAM_PB_CAP (see config.py).
     Unreliable for banks/financials (book value distorted by leverage - flagged
     separately in ranking.py) and meaningless with negative EPS or BVPS."""
     if cf.eps is None or cf.book_value_per_share is None:
         return None, "missing EPS or book value/share"
     if cf.eps <= 0 or cf.book_value_per_share <= 0:
         return None, "negative EPS or book value"
-    value = math.sqrt(22.5 * cf.eps * cf.book_value_per_share)
-    return value, f"sqrt(22.5 x {cf.eps:.2f} x {cf.book_value_per_share:.2f})"
+    value = math.sqrt(config.GRAHAM_MULTIPLIER * cf.eps * cf.book_value_per_share)
+    return value, f"sqrt({config.GRAHAM_MULTIPLIER} x {cf.eps:.2f} x {cf.book_value_per_share:.2f})"
 
 
 def _estimate_growth_rate(history: list, fallback: float = 0.10, cap: float = 0.35) -> float:
@@ -126,3 +127,4 @@ def run_all_methods(cf: CompanyFundamentals, sector_median_pe: Optional[float],
         fair_value, note = fn_result
         results[name] = {"fair_value": fair_value, "note": note}
     return results
+
