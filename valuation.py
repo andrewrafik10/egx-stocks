@@ -15,14 +15,20 @@ from scraper import CompanyFundamentals
 
 
 def pe_valuation(cf: CompanyFundamentals, sector_median_pe: Optional[float]) -> Tuple[Optional[float], str]:
-    """Fair value = EPS x sector median P/E. Falls back to a market-wide default
-    multiple if no sector peers are available."""
-    if cf.eps is None or cf.eps <= 0:
-        return None, "no positive EPS"
+    """Fair value = EPS x sector median P/E. Prefers forward (consensus)
+    EPS over trailing EPS when the site has a usable forward P/E - forward
+    estimates are less distorted by one-off items and stale historical
+    earnings, which matters a lot in Egypt's inflationary environment.
+    Falls back to trailing EPS, then to a market-wide default multiple."""
+    use_forward = cf.forward_eps is not None and cf.forward_eps > 0
+    eps_to_use = cf.forward_eps if use_forward else cf.eps
+    if eps_to_use is None or eps_to_use <= 0:
+        return None, "no positive EPS (forward or trailing)"
     multiple = sector_median_pe
     if multiple is None or multiple <= 0:
         return None, "no sector P/E benchmark available"
-    return cf.eps * multiple, f"EPS {cf.eps:.2f} x sector median P/E {multiple:.1f}x"
+    label = "forward" if use_forward else "trailing"
+    return eps_to_use * multiple, f"{label} EPS {eps_to_use:.2f} x sector median P/E {multiple:.1f}x"
 
 
 def graham_number(cf: CompanyFundamentals) -> Tuple[Optional[float], str]:
@@ -62,12 +68,19 @@ def dcf_valuation(cf: CompanyFundamentals) -> Tuple[Optional[float], str]:
       5. Divide by shares outstanding
 
     Requires positive current FCF - flagged as unreliable otherwise (common for
-    capex-heavy or early-stage names, per your modeling notes on this).
+    capex-heavy or early-stage names, per your modeling notes on this). Also
+    requires a reasonably stable FCF history (majority-positive), since a
+    single good year sandwiched between loss years produces a fair value that
+    isn't really trustworthy even though the current year happens to be positive.
     """
     if cf.free_cash_flow is None or cf.free_cash_flow <= 0:
         return None, "no positive free cash flow"
     if not cf.shares_outstanding:
         return None, "missing shares outstanding"
+    if cf.fcf_history:
+        positive_years = sum(1 for v in cf.fcf_history if v is not None and v > 0)
+        if positive_years < len(cf.fcf_history) / 2:
+            return None, f"FCF history too volatile ({positive_years}/{len(cf.fcf_history)} positive years)"
 
     g0 = _estimate_growth_rate(cf.fcf_history, fallback=0.12)
     r = config.DEFAULT_COST_OF_EQUITY
