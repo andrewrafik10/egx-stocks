@@ -67,6 +67,28 @@ FINANCIAL_SECTOR_TICKERS = {
     "EXPA", "CICH", "UBEE", "SAUD", "EGBE", "SAIB",
 }
 
+# --- Sector classification for peer benchmarking ---
+# Tier 1 (tightest): the exact "Industry" string scraped from each stock's
+# overview page (e.g. "Agricultural Chemicals"). Used when enough EGX peers
+# share that exact label.
+# Tier 2 (fallback): broader macro-sector via keyword match against that same
+# Industry string - order matters, first match wins.
+# Tier 3 (guaranteed fallback): the existing Financial/Other split, which
+# always has enough peers since it spans most of the universe.
+MIN_PEER_GROUP_SIZE = 3  # minimum peers needed before trusting a tier's median
+
+SECTOR_KEYWORDS = [
+    ("Financials", ["bank", "insurance", "financial", "asset management", "credit", "capital markets"]),
+    ("Real Estate", ["real estate", "reit", "engineering & construction"]),
+    ("Materials & Chemicals", ["chemical", "fertilizer", "steel", "metal", "mining", "paper", "packaging", "building materials", "cement", "construction materials"]),
+    ("Energy & Utilities", ["oil", "gas", "energy", "utilit", "electric"]),
+    ("Consumer", ["food", "beverage", "retail", "apparel", "household", "personal products", "tobacco", "restaurant", "grocery", "consumer"]),
+    ("Healthcare", ["pharma", "health", "biotech", "medical", "drug"]),
+    ("Telecom & Technology", ["telecom", "software", "technology", "internet", "semiconductor", "it services", "media"]),
+    ("Industrials", ["industrial", "machinery", "manufactur", "transport", "logistics", "aerospace", "defense", "conglomerate", "electrical equipment", "shipping"]),
+    ("Travel & Leisure", ["hotel", "resort", "tourism", "leisure", "entertainment", "broadcasting"]),
+]
+
 # --- Ranking weights (must sum to 1.0 across methods actually available per stock) ---
 METHOD_WEIGHTS = {
     "pe": 0.25,
