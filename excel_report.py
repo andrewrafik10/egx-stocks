@@ -75,6 +75,10 @@ def build_excel(ranked: list, all_cf: dict, output_path: str) -> str:
         def up(method):
             return r["upsides"].get(method)
 
+        note_parts = list(r["errors"])
+        if r["low_confidence"]:
+            note_parts.insert(0, f"LOW CONFIDENCE ({r['methods_used']} method{'s' if r['methods_used'] != 1 else ''} only)")
+
         values = {
             "Rank": rank,
             "Ticker": r["ticker"],
@@ -95,7 +99,7 @@ def build_excel(ranked: list, all_cf: dict, output_path: str) -> str:
             "Comps Upside": up("comps"),
             "Composite Upside": r["composite_upside"],
             "Methods Used": r["methods_used"],
-            "Notes": "; ".join(r["errors"]) if r["errors"] else "",
+            "Notes": "; ".join(note_parts) if note_parts else "",
         }
 
         for name, value in values.items():
@@ -151,3 +155,4 @@ def build_excel(ranked: list, all_cf: dict, output_path: str) -> str:
 
     wb.save(output_path)
     return output_path
+
