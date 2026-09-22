@@ -75,3 +75,13 @@ METHOD_WEIGHTS = {
     "comps": 0.25,
 }
 
+# --- Ranking quality controls ---
+# Below this many contributing methods, a stock's composite score is resting
+# on too little evidence to rank normally - it's still shown, just sorted
+# after higher-confidence names rather than dropped.
+MIN_METHODS_FOR_RANK = 2
+# Clip (winsorize) any single method's implied upside/downside to this range
+# before blending into the composite, so one outlier method (e.g. a DCF that
+# spikes on a thin FCF base) can't single-handedly dominate the ranking.
+UPSIDE_WINSORIZE_CAP = 3.0  # +/-300%
+
