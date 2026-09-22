@@ -89,6 +89,24 @@ SECTOR_KEYWORDS = [
     ("Travel & Leisure", ["hotel", "resort", "tourism", "leisure", "entertainment", "broadcasting"]),
 ]
 
+# Tier 3.5: fixed target P/E multiples by macro sector, used only when even the
+# macro-sector peer group is too thin (< MIN_PEER_GROUP_SIZE) for a reliable
+# EGX-data-driven median. These are analyst-judgment point estimates (midpoint
+# of a reasonable range for the current market), not derived from live data -
+# prefer real peer medians whenever there are enough peers to compute one.
+SECTOR_TARGET_PE = {
+    "Financials": 7.5,
+    "Real Estate": 10.0,
+    "Materials & Chemicals": 8.5,
+    "Healthcare": 11.5,
+    "Consumer": 10.0,
+    "Telecom & Technology": 9.5,
+    "Energy & Utilities": 8.0,
+    "Industrials": 9.5,
+    "Travel & Leisure": 9.5,
+    "Other": 9.5,
+}
+
 # --- Ranking weights (must sum to 1.0 across methods actually available per stock) ---
 METHOD_WEIGHTS = {
     "pe": 0.25,
@@ -102,8 +120,13 @@ METHOD_WEIGHTS = {
 # on too little evidence to rank normally - it's still shown, just sorted
 # after higher-confidence names rather than dropped.
 MIN_METHODS_FOR_RANK = 2
-# Clip (winsorize) any single method's implied upside/downside to this range
-# before blending into the composite, so one outlier method (e.g. a DCF that
-# spikes on a thin FCF base) can't single-handedly dominate the ranking.
-UPSIDE_WINSORIZE_CAP = 3.0  # +/-300%
+# Per-method winsorization caps on implied upside/downside, applied before
+# blending into the composite. DCF is capped tighter than the others since
+# it's the method most prone to extreme outliers on a thin FCF base.
+METHOD_UPSIDE_CAPS = {
+    "pe": 3.0,      # +/-300%
+    "graham": 3.0,  # +/-300%
+    "dcf": 1.5,     # +/-150%
+    "comps": 3.0,   # +/-300%
+}
 
