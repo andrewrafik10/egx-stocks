@@ -49,7 +49,11 @@ def score_ticker(ticker: str, cf: CompanyFundamentals, benchmarks: dict) -> dict
     for method, res in method_results.items():
         fv = res["fair_value"]
         if fv is not None and cf.price:
-            upsides[method] = (fv - cf.price) / cf.price
+            raw_upside = (fv - cf.price) / cf.price
+            # Winsorize: cap each method's contribution so one outlier (e.g. a
+            # DCF spiking on a thin FCF base) can't dominate the composite.
+            cap = config.UPSIDE_WINSORIZE_CAP
+            upsides[method] = max(-cap, min(cap, raw_upside))
 
     # Graham is structurally unreliable for financials - down-weight rather than drop,
     # so it still contributes a little signal without dominating.
@@ -65,14 +69,16 @@ def score_ticker(ticker: str, cf: CompanyFundamentals, benchmarks: dict) -> dict
     else:
         composite = sum(upsides[m] * (w / total_weight) for m, w in available.items())
 
+    methods_used = len(upsides)
     return {
         "ticker": ticker,
         "price": cf.price,
         "is_financial": is_fin,
         "method_results": method_results,
         "upsides": upsides,
-        "methods_used": len(upsides),
+        "methods_used": methods_used,
         "composite_upside": composite,
+        "low_confidence": methods_used < config.MIN_METHODS_FOR_RANK,
         "errors": cf.errors,
     }
 
@@ -80,7 +86,14 @@ def score_ticker(ticker: str, cf: CompanyFundamentals, benchmarks: dict) -> dict
 def rank_universe(all_cf: dict) -> list:
     benchmarks = sector_benchmarks(all_cf)
     scored = [score_ticker(t, cf, benchmarks) for t, cf in all_cf.items()]
-    # push stocks with no usable methods to the bottom rather than dropping them,
-    # so the report can still flag "insufficient data" names
-    scored.sort(key=lambda x: (x["composite_upside"] is None, -(x["composite_upside"] or -999)))
+    # Sort priority: (1) has a composite score at all, (2) meets the minimum
+    # methods-used bar for confidence, (3) highest upside first. This keeps
+    # a 1-method score from outranking a well-covered name, without hiding
+    # it from the report entirely.
+    scored.sort(key=lambda x: (
+        x["composite_upside"] is None,
+        x["low_confidence"],
+        -(x["composite_upside"] if x["composite_upside"] is not None else -999),
+    ))
     return scored
+
