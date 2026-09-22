@@ -41,7 +41,11 @@ def sector_benchmarks(all_cf: dict) -> dict:
         is_fin = t in config.FINANCIAL_SECTOR_TICKERS
         macro = macro_sector(cf.sector, is_fin)
 
-        pe = cf.price / cf.eps if (cf.eps and cf.price and cf.eps > 0) else None
+        pe = None
+        if cf.forward_pe and cf.forward_pe > 0:
+            pe = cf.forward_pe
+        elif cf.eps and cf.price and cf.eps > 0:
+            pe = cf.price / cf.eps
         ev_ebitda = None
         if cf.ebitda and cf.ebitda > 0 and cf.market_cap:
             net_debt = (cf.total_debt or 0) - (cf.cash or 0)
@@ -76,7 +80,12 @@ def sector_benchmarks(all_cf: dict) -> dict:
 
 def _pick_peer_benchmark(ticker: str, cf: CompanyFundamentals, benchmarks: dict, metric: str):
     """Returns (value, label) for either metric='pe' or metric='ev', walking
-    the 3 tiers from tightest to broadest until one has enough peers."""
+    tiers from tightest to broadest until one has enough peers:
+      1. Exact industry peer median
+      2. Macro-sector peer median
+      3. (P/E only) fixed sector target multiple (config.SECTOR_TARGET_PE)
+      4. Financial vs Other binary median - guaranteed final fallback
+    """
     is_fin = ticker in config.FINANCIAL_SECTOR_TICKERS
     macro = macro_sector(cf.sector, is_fin)
 
@@ -88,6 +97,9 @@ def _pick_peer_benchmark(ticker: str, cf: CompanyFundamentals, benchmarks: dict,
     n = benchmarks[f"macro_{metric}_n"].get(macro, 0)
     if n >= config.MIN_PEER_GROUP_SIZE:
         return benchmarks[f"macro_{metric}"][macro], f"{macro} (n={n})"
+
+    if metric == "pe" and macro in config.SECTOR_TARGET_PE:
+        return config.SECTOR_TARGET_PE[macro], f"{macro} target multiple (insufficient EGX peers)"
 
     key = "financial" if is_fin else "other"
     field = "pe" if metric == "pe" else "ev_ebitda"
@@ -113,16 +125,24 @@ def score_ticker(ticker: str, cf: CompanyFundamentals, benchmarks: dict) -> dict
         fv = res["fair_value"]
         if fv is not None and cf.price:
             raw_upside = (fv - cf.price) / cf.price
-            # Winsorize: cap each method's contribution so one outlier (e.g. a
-            # DCF spiking on a thin FCF base) can't dominate the composite.
-            cap = config.UPSIDE_WINSORIZE_CAP
+            # Winsorize per-method (DCF capped tighter than the others - see
+            # config.METHOD_UPSIDE_CAPS) so one outlier can't dominate.
+            cap = config.METHOD_UPSIDE_CAPS.get(method, 3.0)
             upsides[method] = max(-cap, min(cap, raw_upside))
+
+    methods_used = len(upsides)
 
     # Graham is structurally unreliable for financials - down-weight rather than drop,
     # so it still contributes a little signal without dominating.
     weights = dict(config.METHOD_WEIGHTS)
     if is_fin and "graham" in upsides:
         weights["graham"] *= 0.3
+    # DCF is the most assumption-heavy method (one flat discount rate, a
+    # single growth-fade path) - when it's not corroborated by at least 2
+    # other methods, trust it less rather than let it swing the composite
+    # on its own.
+    if "dcf" in upsides and methods_used < 3:
+        weights["dcf"] *= 0.5
 
     available = {m: w for m, w in weights.items() if m in upsides}
     total_weight = sum(available.values())
@@ -132,7 +152,6 @@ def score_ticker(ticker: str, cf: CompanyFundamentals, benchmarks: dict) -> dict
     else:
         composite = sum(upsides[m] * (w / total_weight) for m, w in available.items())
 
-    methods_used = len(upsides)
     return {
         "ticker": ticker,
         "price": cf.price,
