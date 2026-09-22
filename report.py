@@ -29,7 +29,7 @@ def build_report(ranked: list, top_n: int = 15) -> list:
         methods_str = " ".join(
             f"{METHOD_LABELS[m]}:{_fmt_pct(u)}" for m, u in r["upsides"].items()
         )
-        flag = " ⚠️ low coverage" if r["methods_used"] <= 1 else ""
+        flag = " ⚠️ low coverage" if r["low_confidence"] else ""
         lines.append(
             f"{rank}. *{r['ticker']}* — {_fmt_pct(r['composite_upside'])} "
             f"(price {r['price']:.2f}){flag}\n   {methods_str}"
@@ -60,3 +60,4 @@ def build_report(ranked: list, top_n: int = 15) -> list:
     if chunk:
         messages.append(chunk)
     return messages
+
