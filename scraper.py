@@ -121,7 +121,7 @@ def fetch_ticker(ticker: str) -> CompanyFundamentals:
     cf = CompanyFundamentals(ticker=ticker)
     base = f"{config.BASE_URL}/{ticker}"
 
-    # --- Overview: price, market cap, name ---
+    # --- Overview: price, market cap, name, industry ---
     html = _get(f"{base}/")
     if html:
         try:
@@ -133,6 +133,13 @@ def fetch_ticker(ticker: str) -> CompanyFundamentals:
                     cf.shares_outstanding = _first_numeric_row(df, "Shares Out")
         except ValueError:
             pass
+        # Industry classification, pulled from the page's embedded JS data
+        # payload rather than a <table> - e.g. `{t:"Industry",v:"Agricultural
+        # Chemicals",u:null}` - regex is far simpler and more robust here than
+        # trying to parse the surrounding Svelte-hydrated markup.
+        m = re.search(r'\{t:"Industry",v:"([^"]+)"', html)
+        if m:
+            cf.sector = m.group(1)
     time.sleep(config.REQUEST_DELAY_SECONDS)
 
     # --- Income statement (TTM + history for growth) ---
