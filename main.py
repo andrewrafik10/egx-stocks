@@ -6,6 +6,7 @@ Scheduled via .github/workflows/weekly-fundamental-report.yml
 
 import logging
 from datetime import date
+from pathlib import Path
 
 import config
 from scraper import fetch_universe
@@ -26,13 +27,27 @@ def main():
     ranked = rank_universe(all_cf)
 
     log.info("Building Excel workbook...")
-    excel_path = f"/tmp/egx_weekly_report_{date.today().isoformat()}.xlsx"
-    build_excel(ranked, all_cf, excel_path)
+    # اكتب داخل workspace (أثبت على GitHub Actions من /tmp)
+    out_dir = Path.cwd() / "output"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    excel_path = out_dir / f"egx_weekly_report_{date.today().isoformat()}.xlsx"
+
+    build_excel(ranked, all_cf, str(excel_path))
+
+    if not excel_path.exists() or excel_path.stat().st_size == 0:
+        raise FileNotFoundError(
+            f"Excel was not created or is empty: {excel_path.resolve()}"
+        )
+
+    log.info("Excel saved: %s (%s bytes)", excel_path.resolve(), excel_path.stat().st_size)
 
     log.info("Sending Excel workbook to Telegram...")
-    usable = sum(1 for r in ranked if r["composite_upside"] is not None)
-    caption = f"EGX Weekly Fundamental Scan — {date.today().strftime('%d %b %Y')} ({usable}/{len(ranked)} scored)"
-    send_document(excel_path, caption=caption)
+    usable = sum(1 for r in ranked if r.get("composite_upside") is not None)
+    caption = (
+        f"EGX Weekly Fundamental Scan — {date.today().strftime('%d %b %Y')} "
+        f"({usable}/{len(ranked)} scored)"
+    )
+    send_document(str(excel_path), caption=caption)
 
     log.info("Sending short text summary too...")
     messages = build_report(ranked, top_n=10)
