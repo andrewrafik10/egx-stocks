@@ -1,15 +1,12 @@
 """
-Builds the weekly Excel deliverable: every EGX30/EGX70 ticker, every valuation
-method's fair value and implied upside, blended composite score, and rank.
-
-Formatting conventions (matching the style used across the rest of the
-modeling portfolio): bold header row, frozen panes, percentage formatting,
-color-scale conditional formatting on the upside columns (red = downside,
-green = upside), light shading to flag banks/financials where Graham is
-structurally weaker.
+Builds the weekly Excel deliverable with a more professional structure:
+  1. Executive Summary
+  2. Full Ranking
+  3. Methodology
 """
 
 from datetime import date
+from collections import defaultdict
 
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
@@ -19,7 +16,12 @@ from openpyxl.utils import get_column_letter
 HEADER_FILL = PatternFill(start_color="1F4E78", end_color="1F4E78", fill_type="solid")
 HEADER_FONT = Font(color="FFFFFF", bold=True)
 FINANCIAL_FILL = PatternFill(start_color="FCE4D6", end_color="FCE4D6", fill_type="solid")
+HIGH_CONF_FILL = PatternFill(start_color="C6EFCE", end_color="C6EFCE", fill_type="solid")
+MEDIUM_CONF_FILL = PatternFill(start_color="FFEB9C", end_color="FFEB9C", fill_type="solid")
+LOW_CONF_FILL = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
 THIN_BORDER = Border(*(Side(style="thin", color="D9D9D9"),) * 4)
+TITLE_FONT = Font(bold=True, size=14)
+SECTION_FONT = Font(bold=True, size=12)
 
 COLUMNS = [
     ("Rank", 6),
@@ -42,7 +44,8 @@ COLUMNS = [
     ("Comps Upside", 12),
     ("Composite Upside", 16),
     ("Methods Used", 12),
-    ("Notes", 40),
+    ("Confidence", 12),
+    ("Notes", 45),
 ]
 
 PERCENT_COLS = {"P/E Upside", "Graham Upside", "DCF Upside", "Comps Upside", "Composite Upside"}
@@ -52,8 +55,90 @@ BIG_NUMBER_COLS = {"Revenue", "Net Income", "EBITDA"}
 
 def build_excel(ranked: list, all_cf: dict, output_path: str) -> str:
     wb = Workbook()
-    ws = wb.active
-    ws.title = "EGX Weekly Ranking"
+
+    # ====================== 1. Executive Summary ======================
+    ws_sum = wb.active
+    ws_sum.title = "Executive Summary"
+
+    usable = [r for r in ranked if r["composite_upside"] is not None]
+    high_conf = [r for r in usable if r.get("confidence") == "High"]
+    medium_conf = [r for r in usable if r.get("confidence") == "Medium"]
+    low_conf = [r for r in usable if r.get("confidence") == "Low"]
+
+    ws_sum["A1"] = "EGX Weekly Fundamental Report"
+    ws_sum["A1"].font = Font(bold=True, size=16)
+    ws_sum["A2"] = f"Generated: {date.today().strftime('%d %B %Y')}"
+    ws_sum["A3"] = f"Universe: {len(ranked)} tickers | Scored: {len(usable)}"
+
+    ws_sum["A5"] = "Confidence Breakdown"
+    ws_sum["A5"].font = SECTION_FONT
+    ws_sum["A6"] = f"High Confidence (≥3 methods): {len(high_conf)}"
+    ws_sum["A7"] = f"Medium Confidence (2 methods): {len(medium_conf)}"
+    ws_sum["A8"] = f"Low Confidence (≤1 method): {len(low_conf)}"
+
+    ws_sum["A10"] = "Top 10 Opportunities (Highest Composite Upside)"
+    ws_sum["A10"].font = SECTION_FONT
+
+    headers = ["Rank", "Ticker", "Sector", "Price", "Composite Upside", "Methods", "Confidence"]
+    for col, h in enumerate(headers, 1):
+        cell = ws_sum.cell(row=11, column=col, value=h)
+        cell.fill = HEADER_FILL
+        cell.font = HEADER_FONT
+
+    for i, r in enumerate(usable[:10], 1):
+        row = 11 + i
+        ws_sum.cell(row=row, column=1, value=i)
+        ws_sum.cell(row=row, column=2, value=r["ticker"])
+        ws_sum.cell(row=row, column=3, value=r.get("macro_sector", ""))
+        ws_sum.cell(row=row, column=4, value=r["price"]).number_format = "#,##0.00"
+        cell_up = ws_sum.cell(row=row, column=5, value=r["composite_upside"])
+        cell_up.number_format = "+0.0%;-0.0%"
+        ws_sum.cell(row=row, column=6, value=r["methods_used"])
+        conf_cell = ws_sum.cell(row=row, column=7, value=r.get("confidence", ""))
+        if r.get("confidence") == "High":
+            conf_cell.fill = HIGH_CONF_FILL
+        elif r.get("confidence") == "Medium":
+            conf_cell.fill = MEDIUM_CONF_FILL
+        else:
+            conf_cell.fill = LOW_CONF_FILL
+
+    # Sector average upside
+    ws_sum["A23"] = "Average Composite Upside by Sector"
+    ws_sum["A23"].font = SECTION_FONT
+
+    sector_upsides = defaultdict(list)
+    for r in usable:
+        sector_upsides[r.get("macro_sector", "Other")].append(r["composite_upside"])
+
+    ws_sum["A24"] = "Sector"
+    ws_sum["B24"] = "Avg Upside"
+    ws_sum["C24"] = "Count"
+    ws_sum["A24"].fill = HEADER_FILL
+    ws_sum["B24"].fill = HEADER_FILL
+    ws_sum["C24"].fill = HEADER_FILL
+    ws_sum["A24"].font = HEADER_FONT
+    ws_sum["B24"].font = HEADER_FONT
+    ws_sum["C24"].font = HEADER_FONT
+
+    row = 25
+    for sector, ups in sorted(sector_upsides.items(), key=lambda x: -sum(x[1])/len(x[1])):
+        avg = sum(ups) / len(ups)
+        ws_sum.cell(row=row, column=1, value=sector)
+        cell = ws_sum.cell(row=row, column=2, value=avg)
+        cell.number_format = "+0.0%;-0.0%"
+        ws_sum.cell(row=row, column=3, value=len(ups))
+        row += 1
+
+    ws_sum.column_dimensions["A"].width = 28
+    ws_sum.column_dimensions["B"].width = 14
+    ws_sum.column_dimensions["C"].width = 12
+    ws_sum.column_dimensions["D"].width = 12
+    ws_sum.column_dimensions["E"].width = 16
+    ws_sum.column_dimensions["F"].width = 10
+    ws_sum.column_dimensions["G"].width = 12
+
+    # ====================== 2. Full Ranking ======================
+    ws = wb.create_sheet("Full Ranking")
 
     for col_idx, (name, width) in enumerate(COLUMNS, start=1):
         cell = ws.cell(row=1, column=col_idx, value=name)
@@ -76,8 +161,8 @@ def build_excel(ranked: list, all_cf: dict, output_path: str) -> str:
         def up(method):
             return r["upsides"].get(method)
 
-        note_parts = list(r["errors"])
-        if r["low_confidence"]:
+        note_parts = list(r.get("errors", []))
+        if r.get("low_confidence"):
             note_parts.insert(0, f"LOW CONFIDENCE ({r['methods_used']} method{'s' if r['methods_used'] != 1 else ''} only)")
 
         values = {
@@ -101,20 +186,31 @@ def build_excel(ranked: list, all_cf: dict, output_path: str) -> str:
             "Comps Upside": up("comps"),
             "Composite Upside": r["composite_upside"],
             "Methods Used": r["methods_used"],
+            "Confidence": r.get("confidence", ""),
             "Notes": "; ".join(note_parts) if note_parts else "",
         }
 
         for name, value in values.items():
             c = ws.cell(row=row, column=col_index[name], value=value)
             c.border = THIN_BORDER
+
             if name in PERCENT_COLS and value is not None:
                 c.number_format = "+0.0%;-0.0%"
             elif name in NUMBER_COLS and value is not None:
                 c.number_format = "#,##0.00"
             elif name in BIG_NUMBER_COLS and value is not None:
-                c.number_format = "#,##0,,\"M\""  # display in millions
+                c.number_format = '#,##0,,"M"'
+
             if r["is_financial"]:
                 c.fill = FINANCIAL_FILL
+
+            if name == "Confidence":
+                if value == "High":
+                    c.fill = HIGH_CONF_FILL
+                elif value == "Medium":
+                    c.fill = MEDIUM_CONF_FILL
+                elif value == "Low":
+                    c.fill = LOW_CONF_FILL
 
     last_row = len(ranked) + 1
     if last_row > 1:
@@ -130,31 +226,7 @@ def build_excel(ranked: list, all_cf: dict, output_path: str) -> str:
                 ),
             )
 
-    # Legend / notes sheet
-    notes = wb.create_sheet("Notes")
-    notes["A1"] = "EGX Weekly Fundamental Scan"
+    # ====================== 3. Methodology ======================
+    notes = wb.create_sheet("Methodology")
+    notes["A1"] = "EGX Weekly Fundamental Report – Methodology"
     notes["A1"].font = Font(bold=True, size=14)
-    notes["A2"] = f"Generated {date.today().isoformat()}"
-    lines = [
-        "",
-        "Composite Upside blends P/E, Graham Number, DCF, and Comparable (EV/EBITDA) valuation,",
-        "re-weighting across whichever methods produced a usable fair value for that stock.",
-        "",
-        "Financial-sector rows (shaded) have Graham Number down-weighted, since book value",
-        "is distorted by leverage for banks - treat that column with extra caution for those names.",
-        "",
-        "Methods Used = how many of the 4 methods contributed a fair value. Low coverage",
-        "(1 or fewer) means the composite score is resting on a single, less reliable method.",
-        "",
-        "This is a screening signal built from a simplified, single-assumption model",
-        "(one flat cost of equity, coarse sector benchmarks) - not a substitute for the",
-        "line-by-line models in the IB portfolio work. Treat it as a starting shortlist,",
-        "not a price target.",
-    ]
-    for i, line in enumerate(lines, start=3):
-        notes[f"A{i}"] = line
-    notes.column_dimensions["A"].width = 100
-
-    wb.save(output_path)
-    return output_path
-
