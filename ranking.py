@@ -18,9 +18,7 @@ from valuation import run_all_methods
 
 
 def macro_sector(industry: Optional[str], is_financial_fallback: bool) -> str:
-    """Maps a scraped Industry string to one of the broader SECTOR_KEYWORDS
-    buckets. Falls back to Financials/Other (via the hand-curated ticker list)
-    when there's no scraped industry to work with at all."""
+    """Maps a scraped Industry string to one of the broader SECTOR_KEYWORDS buckets."""
     if industry:
         low = industry.lower()
         for name, keywords in config.SECTOR_KEYWORDS:
@@ -30,8 +28,7 @@ def macro_sector(industry: Optional[str], is_financial_fallback: bool) -> str:
 
 
 def sector_benchmarks(all_cf: dict) -> dict:
-    """Builds median P/E and EV/EBITDA at all 3 tiers, plus peer counts so
-    score_ticker can decide which tier is trustworthy enough to use."""
+    """Builds median P/E and EV/EBITDA at all 3 tiers."""
     industry_pe, industry_ev = {}, {}
     macro_pe, macro_ev = {}, {}
     financial_pes, financial_ev = [], []
@@ -42,10 +39,11 @@ def sector_benchmarks(all_cf: dict) -> dict:
         macro = macro_sector(cf.sector, is_fin)
 
         pe = None
-        if cf.forward_pe and cf.forward_pe > 0:
+        if getattr(cf, "forward_pe", None) and cf.forward_pe > 0:
             pe = cf.forward_pe
         elif cf.eps and cf.price and cf.eps > 0:
             pe = cf.price / cf.eps
+
         ev_ebitda = None
         if cf.ebitda and cf.ebitda > 0 and cf.market_cap:
             net_debt = (cf.total_debt or 0) - (cf.cash or 0)
@@ -56,6 +54,7 @@ def sector_benchmarks(all_cf: dict) -> dict:
                 industry_pe.setdefault(cf.sector, []).append(pe)
             macro_pe.setdefault(macro, []).append(pe)
             (financial_pes if is_fin else other_pes).append(pe)
+
         if ev_ebitda is not None:
             if cf.sector:
                 industry_ev.setdefault(cf.sector, []).append(ev_ebitda)
@@ -79,13 +78,7 @@ def sector_benchmarks(all_cf: dict) -> dict:
 
 
 def _pick_peer_benchmark(ticker: str, cf: CompanyFundamentals, benchmarks: dict, metric: str):
-    """Returns (value, label) for either metric='pe' or metric='ev', walking
-    tiers from tightest to broadest until one has enough peers:
-      1. Exact industry peer median
-      2. Macro-sector peer median
-      3. (P/E only) fixed sector target multiple (config.SECTOR_TARGET_PE)
-      4. Financial vs Other binary median - guaranteed final fallback
-    """
+    """Returns (value, label) walking tiers from tightest to broadest."""
     is_fin = ticker in config.FINANCIAL_SECTOR_TICKERS
     macro = macro_sector(cf.sector, is_fin)
 
@@ -109,12 +102,13 @@ def _pick_peer_benchmark(ticker: str, cf: CompanyFundamentals, benchmarks: dict,
 
 def score_ticker(ticker: str, cf: CompanyFundamentals, benchmarks: dict) -> dict:
     is_fin = ticker in config.FINANCIAL_SECTOR_TICKERS
+    macro = macro_sector(cf.sector, is_fin)
+
     sector_pe, pe_peer_label = _pick_peer_benchmark(ticker, cf, benchmarks, "pe")
     sector_ev_ebitda, ev_peer_label = _pick_peer_benchmark(ticker, cf, benchmarks, "ev")
 
-    method_results = run_all_methods(cf, sector_pe, sector_ev_ebitda)
-    # Tag which peer group actually backed each relative-valuation method,
-    # so the report can show it rather than a mystery "sector median".
+    method_results = run_all_methods(cf, sector_pe, sector_ev_ebitda, macro_sector=macro)
+
     if method_results["pe"]["fair_value"] is not None:
         method_results["pe"]["note"] += f" [peers: {pe_peer_label}]"
     if method_results["comps"]["fair_value"] is not None:
@@ -125,22 +119,18 @@ def score_ticker(ticker: str, cf: CompanyFundamentals, benchmarks: dict) -> dict
         fv = res["fair_value"]
         if fv is not None and cf.price:
             raw_upside = (fv - cf.price) / cf.price
-            # Winsorize per-method (DCF capped tighter than the others - see
-            # config.METHOD_UPSIDE_CAPS) so one outlier can't dominate.
             cap = config.METHOD_UPSIDE_CAPS.get(method, 3.0)
             upsides[method] = max(-cap, min(cap, raw_upside))
 
+    # === IMPORTANT CHANGE: Remove Graham completely for financials ===
+    if is_fin and "graham" in upsides:
+        del upsides["graham"]
+
     methods_used = len(upsides)
 
-    # Graham is structurally unreliable for financials - down-weight rather than drop,
-    # so it still contributes a little signal without dominating.
     weights = dict(config.METHOD_WEIGHTS)
-    if is_fin and "graham" in upsides:
-        weights["graham"] *= 0.3
-    # DCF is the most assumption-heavy method (one flat discount rate, a
-    # single growth-fade path) - when it's not corroborated by at least 2
-    # other methods, trust it less rather than let it swing the composite
-    # on its own.
+
+    # DCF is assumption-heavy — reduce its weight when not well supported
     if "dcf" in upsides and methods_used < 3:
         weights["dcf"] *= 0.5
 
@@ -152,15 +142,24 @@ def score_ticker(ticker: str, cf: CompanyFundamentals, benchmarks: dict) -> dict
     else:
         composite = sum(upsides[m] * (w / total_weight) for m, w in available.items())
 
+    # Clearer confidence label
+    if methods_used >= 3:
+        confidence = "High"
+    elif methods_used == 2:
+        confidence = "Medium"
+    else:
+        confidence = "Low"
+
     return {
         "ticker": ticker,
         "price": cf.price,
         "sector": cf.sector,
-        "macro_sector": macro_sector(cf.sector, is_fin),
+        "macro_sector": macro,
         "is_financial": is_fin,
         "method_results": method_results,
         "upsides": upsides,
         "methods_used": methods_used,
+        "confidence": confidence,
         "composite_upside": composite,
         "low_confidence": methods_used < config.MIN_METHODS_FOR_RANK,
         "errors": cf.errors,
@@ -170,14 +169,10 @@ def score_ticker(ticker: str, cf: CompanyFundamentals, benchmarks: dict) -> dict
 def rank_universe(all_cf: dict) -> list:
     benchmarks = sector_benchmarks(all_cf)
     scored = [score_ticker(t, cf, benchmarks) for t, cf in all_cf.items()]
-    # Sort priority: (1) has a composite score at all, (2) meets the minimum
-    # methods-used bar for confidence, (3) highest upside first. This keeps
-    # a 1-method score from outranking a well-covered name, without hiding
-    # it from the report entirely.
+
     scored.sort(key=lambda x: (
         x["composite_upside"] is None,
         x["low_confidence"],
         -(x["composite_upside"] if x["composite_upside"] is not None else -999),
     ))
     return scored
-
