@@ -16,11 +16,11 @@ TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 # --- Data source ---
 BASE_URL = "https://stockanalysis.com/quote/egx"
-REQUEST_DELAY_SECONDS = 2.0   # be polite - ~100+ tickers x 4 pages = 400+ requests/run
+REQUEST_DELAY_SECONDS = 2.0
 REQUEST_TIMEOUT = 20
 USER_AGENT = "Mozilla/5.0 (compatible; personal-research-bot/1.0)"
 
-# --- EGX30 constituents (verify periodically - see note above) ---
+# --- EGX30 constituents (verify periodically) ---
 EGX30_TICKERS = [
     "COMI", "SWDY", "ETEL", "TMGH", "EGAL", "MFPC", "QNBE", "ABUK", "HDBK",
     "EAST", "ALCN", "ORAS", "EFIH", "EMFD", "ADIB", "FWRY", "SCTS", "ORHD",
@@ -28,7 +28,7 @@ EGX30_TICKERS = [
     "BTFH", "FAIT", "RAYA",
 ]
 
-# --- EGX70 constituents (next tier by market cap - verify periodically) ---
+# --- EGX70 constituents ---
 EGX70_TICKERS = [
     "FERC", "EXPA", "ARCC", "IRON", "EGCH", "SCEM", "CCAP", "BIOC", "CLHO",
     "VALU", "MCQE", "MBSC", "CIRA", "EFIC", "PHAR", "TAQA", "SKPC", "MTIE",
@@ -43,39 +43,38 @@ EGX70_TICKERS = [
 ALL_TICKERS = sorted(set(EGX30_TICKERS + EGX70_TICKERS))
 
 # --- Graham Number assumptions ---
-# Classic formula: sqrt(22.5 x EPS x BVPS), where 22.5 = a P/E ceiling of 15
-# times a P/B ceiling of 1.5. Adjusted per your request: P/E ceiling lowered
-# to 5 (more conservative - demands a much cheaper earnings multiple before
-# a stock counts as undervalued), P/B ceiling left at the classic 1.5.
 GRAHAM_PE_CAP = 5
 GRAHAM_PB_CAP = 1.5
 GRAHAM_MULTIPLIER = GRAHAM_PE_CAP * GRAHAM_PB_CAP  # = 7.5
 
 # --- Valuation assumptions ---
-# EGP-denominated, reflecting Egypt's high-inflation environment.
-# TODO: tune these, or better - derive per-sector CAPM inputs like you did
-# for COMI/ETEL in your modeling portfolio, rather than one flat rate.
-DEFAULT_COST_OF_EQUITY = 0.25       # ~25% - broad EGX blended proxy
-DEFAULT_TERMINAL_GROWTH = 0.09      # long-run nominal growth assumption (EGP)
+DEFAULT_COST_OF_EQUITY = 0.25       # fallback only
+DEFAULT_TERMINAL_GROWTH = 0.09
 DCF_PROJECTION_YEARS = 5
-FCF_HIGH_GROWTH_FADE = True         # fade explicit growth rate toward terminal over the projection
+FCF_HIGH_GROWTH_FADE = True
 
-# Graham Number caveat: unreliable for banks/financials (BVPS distorted by
-# leverage) and for negative-earnings names. Flagged automatically in ranking.py.
+# Cost of Equity by macro sector (more realistic than one flat rate)
+SECTOR_COST_OF_EQUITY = {
+    "Financials": 0.27,
+    "Real Estate": 0.26,
+    "Materials & Chemicals": 0.25,
+    "Healthcare": 0.24,
+    "Consumer": 0.24,
+    "Telecom & Technology": 0.23,
+    "Energy & Utilities": 0.25,
+    "Industrials": 0.25,
+    "Travel & Leisure": 0.26,
+    "Other": 0.25,
+}
+
+# Graham Number is unreliable for banks/financials
 FINANCIAL_SECTOR_TICKERS = {
     "COMI", "QNBE", "HDBK", "ADIB", "CANA", "HRHO", "CIEB", "BTFH", "FAIT",
     "EXPA", "CICH", "UBEE", "SAUD", "EGBE", "SAIB",
 }
 
-# --- Sector classification for peer benchmarking ---
-# Tier 1 (tightest): the exact "Industry" string scraped from each stock's
-# overview page (e.g. "Agricultural Chemicals"). Used when enough EGX peers
-# share that exact label.
-# Tier 2 (fallback): broader macro-sector via keyword match against that same
-# Industry string - order matters, first match wins.
-# Tier 3 (guaranteed fallback): the existing Financial/Other split, which
-# always has enough peers since it spans most of the universe.
-MIN_PEER_GROUP_SIZE = 3  # minimum peers needed before trusting a tier's median
+# --- Sector classification ---
+MIN_PEER_GROUP_SIZE = 3
 
 SECTOR_KEYWORDS = [
     ("Financials", ["bank", "insurance", "financial", "asset management", "credit", "capital markets"]),
@@ -89,11 +88,6 @@ SECTOR_KEYWORDS = [
     ("Travel & Leisure", ["hotel", "resort", "tourism", "leisure", "entertainment", "broadcasting"]),
 ]
 
-# Tier 3.5: fixed target P/E multiples by macro sector, used only when even the
-# macro-sector peer group is too thin (< MIN_PEER_GROUP_SIZE) for a reliable
-# EGX-data-driven median. These are analyst-judgment point estimates (midpoint
-# of a reasonable range for the current market), not derived from live data -
-# prefer real peer medians whenever there are enough peers to compute one.
 SECTOR_TARGET_PE = {
     "Financials": 7.5,
     "Real Estate": 10.0,
@@ -107,7 +101,7 @@ SECTOR_TARGET_PE = {
     "Other": 9.5,
 }
 
-# --- Ranking weights (must sum to 1.0 across methods actually available per stock) ---
+# --- Ranking weights ---
 METHOD_WEIGHTS = {
     "pe": 0.25,
     "graham": 0.20,
@@ -116,17 +110,11 @@ METHOD_WEIGHTS = {
 }
 
 # --- Ranking quality controls ---
-# Below this many contributing methods, a stock's composite score is resting
-# on too little evidence to rank normally - it's still shown, just sorted
-# after higher-confidence names rather than dropped.
 MIN_METHODS_FOR_RANK = 2
-# Per-method winsorization caps on implied upside/downside, applied before
-# blending into the composite. DCF is capped tighter than the others since
-# it's the method most prone to extreme outliers on a thin FCF base.
-METHOD_UPSIDE_CAPS = {
-    "pe": 3.0,      # +/-300%
-    "graham": 3.0,  # +/-300%
-    "dcf": 1.5,     # +/-150%
-    "comps": 3.0,   # +/-300%
-}
 
+METHOD_UPSIDE_CAPS = {
+    "pe": 3.0,
+    "graham": 3.0,
+    "dcf": 1.5,
+    "comps": 3.0,
+}
