@@ -7,6 +7,7 @@ Builds the weekly Excel deliverable with a more professional structure:
 
 from datetime import date
 from collections import defaultdict
+from pathlib import Path
 
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
