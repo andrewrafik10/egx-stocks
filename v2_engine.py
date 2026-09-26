@@ -14,6 +14,8 @@ This is a screening/research model, not investment advice.
 from statistics import median
 from math import sqrt
 from typing import Optional
+from pathlib import Path
+import json
 import config
 from scraper import CompanyFundamentals
 
@@ -22,7 +24,23 @@ def _safe_div(a, b):
     return a / b if a is not None and b not in (None, 0) else None
 
 
+def _sector_overrides():
+    path = Path(config.SECTOR_OVERRIDE_FILE)
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return {k: v for k, v in data.items() if not k.startswith("_")}
+    except Exception:
+        return {}
+
+
+_SECTOR_OVERRIDES = _sector_overrides()
+
+
 def macro_sector(cf: CompanyFundamentals, ticker: str) -> str:
+    if ticker in _SECTOR_OVERRIDES:
+        return _SECTOR_OVERRIDES[ticker]
     industry = (cf.sector or "").lower()
     for name, keywords in config.SECTOR_KEYWORDS:
         if any(k in industry for k in keywords):
@@ -40,6 +58,7 @@ def metrics(cf: CompanyFundamentals):
     cash = cf.cash
 
     pe = _safe_div(cf.price, cf.eps) if cf.eps and cf.eps > 0 else None
+    beta = getattr(cf, "beta", None)
     pb = _safe_div(cf.price, cf.book_value_per_share) if cf.book_value_per_share and cf.book_value_per_share > 0 else None
     roe = _safe_div(ni, eq)
     roa = None
@@ -70,7 +89,7 @@ def metrics(cf: CompanyFundamentals):
         "net_margin": net_margin, "ebitda_margin": ebitda_margin,
         "fcf_margin": fcf_margin, "debt_equity": debt_equity,
         "net_debt_ebitda": net_debt_ebitda, "fcf_conversion": fcf_conversion,
-        "eps_growth": eps_growth, "revenue_growth": revenue_growth,
+        "eps_growth": eps_growth, "revenue_growth": revenue_growth, "beta": beta,
     }
 
 
@@ -118,6 +137,14 @@ def _pb_fv(cf, peer):
     return None
 
 
+def _cost_of_equity(cf):
+    beta = getattr(cf, "beta", None)
+    if config.CAPM_ENABLED and beta is not None and beta > 0:
+        raw = config.EGYPT_RISK_FREE_RATE + beta * config.EGYPT_EQUITY_RISK_PREMIUM
+        return max(config.MIN_COST_OF_EQUITY, min(config.MAX_COST_OF_EQUITY, raw)), "CAPM"
+    return config.DEFAULT_COST_OF_EQUITY, "Fallback"
+
+
 def _dcf(cf, sector):
     if sector in ("Financials", "Unclassified"):
         return None
@@ -131,7 +158,7 @@ def _dcf(cf, sector):
         g0 = max(-0.05, min(0.30, (hist[-1] / hist[0]) ** (1 / (len(hist)-1)) - 1))
     else:
         g0 = 0.10
-    r = config.DEFAULT_COST_OF_EQUITY
+    r, _ = _cost_of_equity(cf)
     gt = config.DEFAULT_TERMINAL_GROWTH
     if r <= gt:
         return None
@@ -230,12 +257,14 @@ def score_one(ticker, cf, peer_stats):
 
     dispersion_penalty = max(0, min(30, (dispersion or 0)*30))
     valuation_upside = (base-current)/current if base and current else None
+    discount_rate, discount_rate_source = _cost_of_equity(cf)
     valuation_score = None if valuation_upside is None else max(0, min(100, 50 + valuation_upside*50))
     confidence = max(0, min(100, completeness*0.55 + (quality or 50)*0.20 + (100-dispersion_penalty)*0.25))
 
     opportunity = None
     if valuation_score is not None:
-        opportunity = round(valuation_score*0.50 + (quality or 50)*0.25 + confidence*0.25, 1)
+        w = config.OPPORTUNITY_WEIGHTS
+        opportunity = round(valuation_score*w["valuation"] + (quality or 50)*w["quality"] + confidence*w["confidence"], 1)
 
     if confidence >= 75 and (dispersion is None or dispersion <= 0.60):
         conf_label = "High"
@@ -252,6 +281,7 @@ def score_one(ticker, cf, peer_stats):
         "data_completeness": completeness, "valuation_score": valuation_score,
         "confidence_score": round(confidence,1), "confidence": conf_label,
         "opportunity_score": opportunity, "methods_used": len(valid), "errors": cf.errors,
+        "discount_rate": discount_rate, "discount_rate_source": discount_rate_source,
     }
 
 
