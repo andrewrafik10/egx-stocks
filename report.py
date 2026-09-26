@@ -4,6 +4,9 @@ from datetime import date
 def _pct(x):
     return "—" if x is None else f"{x:+.1%}"
 
+def _fv(x):
+    return "—" if x is None else f"{x:.2f}"
+
 def build_report(ranked, top_n=10):
     today=date.today().strftime("%d %b %Y")
     usable=[r for r in ranked if r.get("opportunity_score") is not None]
