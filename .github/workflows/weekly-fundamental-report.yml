@@ -1,6 +1,8 @@
 name: EGX Weekly Fundamental Report
 
 on:
+  push:
+    branches: ["main"]
   schedule:
     # Fridays 16:00 UTC = 18:00 Cairo (after EGX close, adjust for DST as needed)
     - cron: "0 16 * * 5"
