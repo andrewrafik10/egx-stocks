@@ -11,7 +11,7 @@ FIELDS = [
     "base_upside","dispersion","quality_score","opportunity_score",
     "confidence_score","confidence","data_completeness","methods_used",
     "pe","pb","dcf","comps","roe","net_margin","ebitda_margin",
-    "fcf_margin","debt_equity","eps_growth","revenue_growth"
+    "fcf_margin","debt_equity","eps_growth","revenue_growth","beta","discount_rate","discount_rate_source"
 ]
 
 def append_snapshot(rows, path=HISTORY_PATH):
