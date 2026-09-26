@@ -45,6 +45,7 @@ class CompanyFundamentals:
     net_income: Optional[float] = None
     eps: Optional[float] = None
     eps_history: list = field(default_factory=list)   # oldest -> newest, for growth calc
+    revenue_history: list = field(default_factory=list) # oldest -> newest
 
     total_equity: Optional[float] = None
     total_debt: Optional[float] = None
@@ -150,6 +151,10 @@ def fetch_ticker(ticker: str) -> CompanyFundamentals:
             for df in tables:
                 if cf.revenue is None:
                     cf.revenue = _first_numeric_row(df, "^Revenue$")
+                revenue_mask = df.iloc[:, 0].astype(str).str.contains("^Revenue$", case=False, na=False, regex=True)
+                if revenue_mask.any():
+                    row = df.loc[revenue_mask].iloc[0]
+                    cf.revenue_history = [_clean_number(v) for v in row[1:] if _clean_number(v) is not None]
                 if cf.net_income is None:
                     cf.net_income = _first_numeric_row(df, "Net Income$") or _first_numeric_row(df, "Net Income to Common")
                 if cf.eps is None:
