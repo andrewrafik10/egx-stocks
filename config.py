@@ -100,7 +100,9 @@ SECTOR_TARGET_PE = {
     "Travel & Leisure": 9.5,
     "Other": 9.5,
 }
-
+git add config.py valuation.py ranking.py excel_report.py report.py
+git commit -m "Improve valuation: sector cost of equity + better report"
+git push
 # --- Ranking weights ---
 METHOD_WEIGHTS = {
     "pe": 0.25,
