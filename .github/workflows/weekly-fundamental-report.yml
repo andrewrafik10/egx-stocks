@@ -7,9 +7,8 @@ on:
       - "data/**"
       - "output/**"
   schedule:
-    # Fridays 16:00 UTC = 18:00 Cairo (after EGX close, adjust for DST as needed)
     - cron: "0 16 * * 5"
-  workflow_dispatch: {}   # allows manual "Run workflow" trigger for testing
+  workflow_dispatch: {}
 
 permissions:
   contents: write
@@ -50,12 +49,13 @@ jobs:
             git push
           fi
 
-      - name: Upload generated V2 report
+      - name: Upload generated V2.5 report
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: egx-v25-report-${{ github.run_number }}
-          path: output/egx_weekly_v2_report_*.xlsx\n          if-no-files-found: error
+          path: output/egx_weekly_v2_report_*.xlsx
+          if-no-files-found: error
           retention-days: 90
 
       - name: Upload historical signal database
