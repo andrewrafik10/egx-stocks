@@ -3,10 +3,16 @@ name: EGX Weekly Fundamental Report
 on:
   push:
     branches: ["main"]
+    paths-ignore:
+      - "data/**"
+      - "output/**"
   schedule:
     # Fridays 16:00 UTC = 18:00 Cairo (after EGX close, adjust for DST as needed)
     - cron: "0 16 * * 5"
   workflow_dispatch: {}   # allows manual "Run workflow" trigger for testing
+
+permissions:
+  contents: write
 
 jobs:
   run-report:
@@ -31,10 +37,31 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python main.py
 
+      - name: Commit V2.5 historical snapshot
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/history.csv
+          if git diff --cached --quiet; then
+            echo "No history changes to commit."
+          else
+            git commit -m "chore: store EGX V2.5 weekly signal history"
+            git push
+          fi
+
       - name: Upload generated V2 report
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: egx-v2-report-${{ github.run_number }}
-          path: output/egx_weekly_v2_report_*.xlsx
+          name: egx-v25-report-${{ github.run_number }}
+          path: output/egx_weekly_v2_report_*.xlsx\n          if-no-files-found: error
           retention-days: 90
+
+      - name: Upload historical signal database
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: egx-v25-history-${{ github.run_number }}
+          path: data/history.csv
+          retention-days: 365
