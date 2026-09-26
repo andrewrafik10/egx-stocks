@@ -15,8 +15,7 @@ from scraper import CompanyFundamentals
 
 
 def pe_valuation(cf: CompanyFundamentals, sector_median_pe: Optional[float]) -> Tuple[Optional[float], str]:
-    """Fair value = EPS x sector median P/E. Prefers forward (consensus)
-    EPS over trailing EPS when available."""
+    """Fair value = EPS x sector median P/E. Prefers forward EPS when available."""
     use_forward = getattr(cf, "forward_eps", None) is not None and cf.forward_eps > 0
     eps_to_use = cf.forward_eps if use_forward else cf.eps
     if eps_to_use is None or eps_to_use <= 0:
@@ -29,8 +28,7 @@ def pe_valuation(cf: CompanyFundamentals, sector_median_pe: Optional[float]) -> 
 
 
 def graham_number(cf: CompanyFundamentals) -> Tuple[Optional[float], str]:
-    """Graham formula: sqrt(GRAHAM_MULTIPLIER x EPS x BVPS).
-    Unreliable for banks/financials and meaningless with negative EPS or BVPS."""
+    """Graham formula: sqrt(GRAHAM_MULTIPLIER x EPS x BVPS)."""
     if cf.eps is None or cf.book_value_per_share is None:
         return None, "missing EPS or book value/share"
     if cf.eps <= 0 or cf.book_value_per_share <= 0:
@@ -64,7 +62,7 @@ def dcf_valuation(cf: CompanyFundamentals, macro_sector: str = "Other") -> Tuple
             return None, f"FCF history too volatile ({positive_years}/{len(cf.fcf_history)} positive years)"
 
     g0 = _estimate_growth_rate(cf.fcf_history, fallback=0.12)
-    
+
     # Use sector-specific cost of equity (fallback to default)
     r = config.SECTOR_COST_OF_EQUITY.get(macro_sector, config.DEFAULT_COST_OF_EQUITY)
     gt = config.DEFAULT_TERMINAL_GROWTH
