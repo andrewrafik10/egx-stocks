@@ -59,6 +59,7 @@ class CompanyFundamentals:
 
     ebitda: Optional[float] = None
     sector: Optional[str] = None
+    beta: Optional[float] = None
 
     errors: list = field(default_factory=list)
 
@@ -161,6 +162,9 @@ def fetch_ticker(ticker: str) -> CompanyFundamentals:
                     cf.eps = _first_numeric_row(df, "EPS \\(Basic\\)") or _first_numeric_row(df, "EPS \\(Diluted\\)")
                 if cf.ebitda is None:
                     cf.ebitda = _first_numeric_row(df, "^EBITDA$")
+                if cf.beta is None:
+                    cf.beta = (_first_numeric_row(df, "Beta \(5Y Monthly\)")
+                               or _first_numeric_row(df, "^Beta$"))
                 # collect EPS across all history columns present for growth-rate estimation
                 eps_mask = df.iloc[:, 0].astype(str).str.contains("EPS \\(Diluted\\)", case=False, na=False)
                 if eps_mask.any():
@@ -265,7 +269,7 @@ def fetch_universe(tickers: list) -> dict:
                 f"total_equity={cf.total_equity} total_debt={cf.total_debt} cash={cf.cash} "
                 f"bvps={cf.book_value_per_share} ocf={cf.operating_cash_flow} "
                 f"capex={cf.capex} fcf={cf.free_cash_flow} fcf_history={cf.fcf_history} "
-                f"ebitda={cf.ebitda}"
+                f"ebitda={cf.ebitda} beta={cf.beta}"
             )
         if cf.errors:
             log.warning(f"{t}: {cf.errors}")
