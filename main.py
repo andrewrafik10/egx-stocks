@@ -12,7 +12,8 @@ import config
 from scraper import fetch_universe
 from v2_engine import rank_v2
 from report import build_report
-from excel_report_v2 import build_excel_v2
+from v25_report import build_excel_v25
+from history_store import append_snapshot
 from telegram_sender import send_messages, send_document
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -32,7 +33,9 @@ def main():
     out_dir.mkdir(parents=True, exist_ok=True)
     excel_path = out_dir / f"egx_weekly_v2_report_{date.today().isoformat()}.xlsx"
 
-    build_excel_v2(ranked, all_cf, str(excel_path))
+    history_path = append_snapshot(ranked)
+    log.info("Historical signal snapshot saved: %s", history_path.resolve())
+    build_excel_v25(ranked, all_cf, str(excel_path), str(history_path))
 
     if not excel_path.exists() or excel_path.stat().st_size == 0:
         raise FileNotFoundError(
