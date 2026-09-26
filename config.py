@@ -67,6 +67,23 @@ EGYPT_EQUITY_RISK_PREMIUM = 0.1487
 MIN_COST_OF_EQUITY = 0.15
 MAX_COST_OF_EQUITY = 0.32
 DEFAULT_COST_OF_EQUITY = 0.25       # fallback only, used when a stock has no Beta
+
+# Sector-level cost-of-equity baseline used by the screening DCF.
+# These are intentionally initialized to the market fallback rather than
+# pretending to have precise sector estimates. Replace with a documented,
+# periodically refreshed CAPM/beta-based dataset in the professional version.
+SECTOR_COST_OF_EQUITY = {
+    "Financials": DEFAULT_COST_OF_EQUITY,
+    "Real Estate": DEFAULT_COST_OF_EQUITY,
+    "Materials & Chemicals": DEFAULT_COST_OF_EQUITY,
+    "Energy & Utilities": DEFAULT_COST_OF_EQUITY,
+    "Consumer": DEFAULT_COST_OF_EQUITY,
+    "Healthcare": DEFAULT_COST_OF_EQUITY,
+    "Telecom & Technology": DEFAULT_COST_OF_EQUITY,
+    "Industrials": DEFAULT_COST_OF_EQUITY,
+    "Travel & Leisure": DEFAULT_COST_OF_EQUITY,
+    "Other": DEFAULT_COST_OF_EQUITY,
+}
 DEFAULT_TERMINAL_GROWTH = 0.09      # long-run nominal growth assumption (EGP)
 DCF_PROJECTION_YEARS = 5
 FCF_HIGH_GROWTH_FADE = True         # fade explicit growth rate toward terminal over the projection
