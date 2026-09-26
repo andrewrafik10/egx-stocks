@@ -1,0 +1,22 @@
+{
+  "_meta": {
+    "purpose": "Manual sector overrides used before keyword classification.",
+    "source": "Internal research taxonomy",
+    "review_frequency": "quarterly",
+    "notes": "Only add an override when the company classification has been reviewed. Unknown names remain Unclassified."
+  },
+  "COMI": "Financials",
+  "QNBE": "Financials",
+  "HDBK": "Financials",
+  "ADIB": "Financials",
+  "CANA": "Financials",
+  "CIEB": "Financials",
+  "BTFH": "Financials",
+  "FAIT": "Financials",
+  "EXPA": "Financials",
+  "CICH": "Financials",
+  "UBEE": "Financials",
+  "SAUD": "Financials",
+  "EGBE": "Financials",
+  "SAIB": "Financials"
+}
