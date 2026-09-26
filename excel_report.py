@@ -230,3 +230,19 @@ def build_excel(ranked: list, all_cf: dict, output_path: str) -> str:
     notes = wb.create_sheet("Methodology")
     notes["A1"] = "EGX Weekly Fundamental Report – Methodology"
     notes["A1"].font = Font(bold=True, size=14)
+
+    notes["A3"] = "Data scope: EGX100 universe. Values are based on the latest successfully scraped fundamentals available at run time."
+    notes["A4"] = "Valuation methods: P/E, Graham Number, DCF, and EV/EBITDA comparables where applicable."
+    notes["A5"] = "Composite upside is calculated from the valuation methods that have valid inputs."
+    notes["A6"] = "Confidence reflects the number of valuation methods successfully available for a stock."
+    notes["A8"] = "Important: DCF cost of equity currently uses configured sector defaults and should be upgraded to documented CAPM-based assumptions before commercial use."
+    notes["A9"] = "Data exceptions and missing fields are shown in the Full Ranking Notes column."
+    notes.column_dimensions["A"].width = 110
+    notes.column_dimensions["B"].width = 20
+    notes.column_dimensions["C"].width = 20
+
+    # Save the workbook to the exact path supplied by main.py.
+    output_file = Path(output_path)
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+    wb.save(output_path)
+    return output_path
