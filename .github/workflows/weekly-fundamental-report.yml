@@ -29,7 +29,7 @@ jobs:
         run: pip install requests pandas lxml openpyxl
 
       - name: Validate Python modules
-        run: python -m py_compile config.py scraper.py v2_engine.py excel_report_v2.py report.py main.py telegram_sender.py
+        run: python -m py_compile config.py scraper.py v2_engine.py excel_report_v2.py v25_report.py history_store.py backtest.py report.py main.py telegram_sender.py
 
       - name: Run weekly scan
         env:
