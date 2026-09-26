@@ -157,3 +157,23 @@ METHOD_UPSIDE_CAPS = {
     "dcf": 1.5,     # +/-150%
     "comps": 3.0,   # +/-300%
 }
+
+
+# --- V2.5 audit / model controls ---
+SECTOR_OVERRIDE_FILE = "sector_overrides.json"
+ASSUMPTIONS_AS_OF = "2026-09-26"
+ASSUMPTIONS_SOURCES = {
+    "risk_free_rate": "Configured analyst assumption; refresh against a current EGP government yield source before client use.",
+    "equity_risk_premium": "Configured analyst assumption; refresh against a current country ERP source before client use.",
+    "beta": "StockAnalysis ratios scrape when available; otherwise market fallback is used.",
+}
+CAPM_ENABLED = True
+
+# Opportunity Score weights are explicit model assumptions. V2.5 stores them
+# with every methodology report so they can be tested later instead of treated
+# as validated facts.
+OPPORTUNITY_WEIGHTS = {
+    "valuation": 0.50,
+    "quality": 0.25,
+    "confidence": 0.25,
+}
