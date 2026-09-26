@@ -2,3 +2,5 @@ output/
 __pycache__/
 *.pyc
 .DS_Store
+
+# V2.5 historical signals are intentionally tracked under data/
