@@ -52,7 +52,10 @@ def append_snapshot(rows, path=HISTORY_PATH):
             "roe": m.get("roe"), "net_margin": m.get("net_margin"),
             "ebitda_margin": m.get("ebitda_margin"), "fcf_margin": m.get("fcf_margin"),
             "debt_equity": m.get("debt_equity"), "eps_growth": m.get("eps_growth"),
-            "revenue_growth": m.get("revenue_growth")
+            "revenue_growth": m.get("revenue_growth"),
+            "beta": m.get("beta"),
+            "discount_rate": r.get("discount_rate"),
+            "discount_rate_source": r.get("discount_rate_source")
         }
         existing[(as_of, r["ticker"])] = {
             k: "" if v is None else v for k, v in values.items()
