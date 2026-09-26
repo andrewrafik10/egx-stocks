@@ -22,8 +22,19 @@ jobs:
       - name: Install dependencies
         run: pip install requests pandas lxml openpyxl
 
+      - name: Validate Python modules
+        run: python -m py_compile config.py scraper.py v2_engine.py excel_report_v2.py report.py main.py telegram_sender.py
+
       - name: Run weekly scan
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python main.py
+
+      - name: Upload generated V2 report
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: egx-v2-report-${{ github.run_number }}
+          path: output/egx_weekly_v2_report_*.xlsx
+          retention-days: 90
