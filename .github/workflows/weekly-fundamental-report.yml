@@ -28,7 +28,7 @@ jobs:
         run: pip install requests pandas lxml openpyxl
 
       - name: Validate Python modules
-        run: python -m py_compile config.py scraper.py v2_engine.py excel_report_v2.py v25_report.py history_store.py backtest.py report.py main.py telegram_sender.py
+        run: python -m py_compile config.py scraper.py v2_engine.py v3_engine.py universe_v3.py history_store_v3.py backtest_v3.py excel_report_v3.py report_v3.py main.py telegram_sender.py
 
       - name: Run weekly scan
         env:
@@ -36,32 +36,33 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python main.py
 
-      - name: Commit V2.5 historical snapshot
+      - name: Commit V3 historical state
         if: success()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/history.csv
+          git add data/history_v3.csv data/universe_history.csv
           if git diff --cached --quiet; then
             echo "No history changes to commit."
           else
-            git commit -m "chore: store EGX V2.5 weekly signal history"
+            git commit -m "chore: store EGX V3 weekly research history"
             git push
           fi
 
-      - name: Upload generated V2.5 report
+      - name: Upload generated V3 report
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: egx-v25-report-${{ github.run_number }}
-          path: output/egx_weekly_v26_report_*.xlsx
+          name: egx-v3-report-${{ github.run_number }}
+          path: output/egx_weekly_v3_report_*.xlsx
           if-no-files-found: error
           retention-days: 90
 
-      - name: Upload historical signal database
+      - name: Upload V3 historical state
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: egx-v25-history-${{ github.run_number }}
-          path: data/history.csv
+          name: egx-v3-history-${{ github.run_number }}
+          path: data/history_v3.csv
+data/universe_history.csv
           retention-days: 365
