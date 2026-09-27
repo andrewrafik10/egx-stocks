@@ -129,12 +129,23 @@ def fetch_ticker(ticker: str) -> CompanyFundamentals:
         try:
             tables = pd.read_html(io.StringIO(html))
             for df in tables:
+                if cf.price is None:
+                    cf.price = _first_numeric_row(df, "^Price$") or _first_numeric_row(df, "Current Price")
                 if cf.market_cap is None:
                     cf.market_cap = _first_numeric_row(df, "Market Cap")
                 if cf.shares_outstanding is None:
                     cf.shares_outstanding = _first_numeric_row(df, "Shares Out")
         except ValueError:
             pass
+        if cf.company_name is None:
+            name_match = re.search(r'"name":"([^"]+)"', html)
+            if name_match:
+                cf.company_name = name_match.group(1)
+            else:
+                title_match = re.search(r"<title>([^<]+)</title>", html, re.I)
+                if title_match:
+                    title = title_match.group(1).strip()
+                    cf.company_name = re.split(r"\s+[|–-]\s+", title)[0].strip() or None
         # Industry classification, pulled from the page's embedded JS data
         # payload rather than a <table> - e.g. `{t:"Industry",v:"Agricultural
         # Chemicals",u:null}` - regex is far simpler and more robust here than
