@@ -47,3 +47,14 @@ CSV files are internal model state committed to GitHub.
 
 V3 is being developed on `v3-development`. V2.6 remains frozen and is not
 rewritten while V3 is validated.
+
+
+## V3 validation discipline
+
+V3 now stores auditable sector provenance, data-source labels, and a research-signal classification. The weekly workbook includes Research Audit, Forward Validation, and Backtest Diagnostics.
+
+Backtesting is strictly out-of-sample: a signal dated T is evaluated only against a later stored price at or beyond 1/3/6/12 months. The engine also reports performance by Opportunity Score bucket, confidence, research signal, and sector. Missing future observations are skipped rather than fabricated.
+
+The Opportunity Score weights are intentionally frozen while observations accumulate. They should only be reconsidered after a meaningful out-of-sample sample exists.
+
+The current universe remains the configured EGX30 + EGX70 fallback and must be reconciled against the latest official EGX constituent extract before commercial use. Stock fundamentals are currently sourced by scrape and should be reconciled to company/EGX disclosures for material fields.
