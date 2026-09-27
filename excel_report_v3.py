@@ -26,24 +26,24 @@ def build_excel_v3(rows,output_path,history_path="data/history_v3.csv",universe_
     for i,(k,v) in enumerate(stats,6): ws.cell(i,1,k); ws.cell(i,2,v)
     if stats[-1][1] is not None: ws["B9"].number_format="+0.0%"
     ws["A12"]="Top 15 V3 Research Opportunities"; ws["A12"].font=Font(bold=True,size=13)
-    h=["Rank","Ticker","Sector","Price","Base FV","Base Upside","Bear FV","Bull FV","Methods","Dispersion","Valuation","Quality","Confidence","Confidence Score","Coverage","Opportunity","Status"]
+    h=["Rank","Ticker","Sector","Price","Base FV","Base Upside","Bear FV","Bull FV","Methods","Dispersion","Valuation","Quality","Confidence","Confidence Score","Coverage","Opportunity","Status","Research Signal"]
     header(ws,13,h)
     for i,r in enumerate(scored[:15],14):
-        row=[r["rank"],r["ticker"],r["sector"],r["price"],r["fair_value_base"],((r["fair_value_base"]-r["price"])/r["price"] if r["fair_value_base"] and r["price"] else None),r["fair_value_bear"],r["fair_value_bull"],", ".join(r["applicable_methods"]),r["dispersion"],r["valuation_score"],r["quality_score"],r["confidence"],r["confidence_score"],r["valuation_coverage"],r["opportunity_score"],r["research_status"]]
+        row=[r["rank"],r["ticker"],r["sector"],r["price"],r["fair_value_base"],((r["fair_value_base"]-r["price"])/r["price"] if r["fair_value_base"] and r["price"] else None),r["fair_value_bear"],r["fair_value_bull"],", ".join(r["applicable_methods"]),r["dispersion"],r["valuation_score"],r["quality_score"],r["confidence"],r["confidence_score"],r["valuation_coverage"],r["opportunity_score"],r["research_status"],r.get("research_signal")]
         for j,v in enumerate(row,1): ws.cell(i,j,v).border=BORDER
         for j in (6,10,15): ws.cell(i,j).number_format="0.0%" if j!=15 else "0%"
         ws.cell(i,13).fill=PatternFill("solid",fgColor=GREEN if r["confidence"]=="High" else YELLOW if r["confidence"]=="Medium" else RED)
     ws.freeze_panes="A14"
-    for j,w in enumerate([7,10,22,11,12,13,12,12,38,12,12,11,13,15,11,12,18],1): ws.column_dimensions[get_column_letter(j)].width=w
+    for j,w in enumerate([7,10,22,11,12,13,12,12,38,12,12,11,13,15,11,12,12,24],1): ws.column_dimensions[get_column_letter(j)].width=w
 
     rd=wb.create_sheet("V3 Ranking")
-    h=["Rank","Ticker","Company","Sector","Price","Bear FV","Base FV","Bull FV","Base Upside","Dispersion","Valuation Score","Quality Score","Confidence","Confidence Score","Coverage","Opportunity Score","Applicable Methods","Methods Used","Red Flags"]
+    h=["Rank","Ticker","Company","Sector","Sector Source","Sector Confidence","Data Source","Price","Bear FV","Base FV","Bull FV","Base Upside","Dispersion","Valuation Score","Quality Score","Confidence","Confidence Score","Coverage","Opportunity Score","Research Signal","Red Flags"]
     header(rd,1,h)
     for i,r in enumerate(rows,2):
-        vals=[r["rank"],r["ticker"],r.get("company_name") or "",r["sector"],r["price"],r["fair_value_bear"],r["fair_value_base"],r["fair_value_bull"],((r["fair_value_base"]-r["price"])/r["price"] if r["fair_value_base"] and r["price"] else None),r["dispersion"],r["valuation_score"],r["quality_score"],r["confidence"],r["confidence_score"],r["valuation_coverage"],r["opportunity_score"],", ".join(r["applicable_methods"]),r["methods_used"],"; ".join(r["red_flags"])]
+        vals=[r["rank"],r["ticker"],r.get("company_name") or "",r["sector"],r.get("sector_source"),r.get("sector_confidence"),r.get("data_source"),r["price"],r["fair_value_bear"],r["fair_value_base"],r["fair_value_bull"],((r["fair_value_base"]-r["price"])/r["price"] if r["fair_value_base"] and r["price"] else None),r["dispersion"],r["valuation_score"],r["quality_score"],r["confidence"],r["confidence_score"],r["valuation_coverage"],r["opportunity_score"],r.get("research_signal"),"; ".join(r["red_flags"])]
         for j,v in enumerate(vals,1): rd.cell(i,j,v).border=BORDER
         for j in (9,10,15): rd.cell(i,j).number_format="0.0%" if j!=15 else "0%"
-    rd.auto_filter.ref=f"A1:S{len(rows)+1}"; rd.freeze_panes="E2"
+    rd.auto_filter.ref=f"A1:U{len(rows)+1}"; rd.freeze_panes="H2"
 
     vd=wb.create_sheet("Valuation Detail")
     h=["Ticker","Sector","Price","DPS","Payout Ratio","P/E FV","P/B FV","Residual Income FV","DDM FV","DCF FV","EV/EBITDA FV","Book NAV Proxy","SOTP FV","Bear FV","Base FV","Bull FV","Dispersion","Coverage","Notes"]
@@ -81,12 +81,41 @@ def build_excel_v3(rows,output_path,history_path="data/history_v3.csv",universe_
     else: hist.append(["No V3 history yet."])
 
     bt=wb.create_sheet("Forward Validation")
-    summary,_=evaluate(history_path)
+    summary,observations,buckets,conf_summary,signal_summary,sector_summary=evaluate(history_path)
     header(bt,1,["Horizon","Observations","Scored Observations","Average Return","Median Return","Positive Rate","Average Opportunity Score"])
     for i,s in enumerate(summary,2):
-        bt.append([s["horizon"],s["observations"],s["scored_observations"],s["avg_return"],s["median_return"],s["positive_rate"],s["avg_score"]])
+        bt.append([s["group"],s["observations"],s["scored_observations"],s["avg_return"],s["median_return"],s["positive_rate"],s["avg_score"]])
         for j in (4,5,6): bt.cell(i,j).number_format="0.0%"
-    if not summary: bt.append(["Not enough future observations yet. V3 collects 1/3/6/12-month validation automatically."])
+    if not summary: bt.append(["Not enough future observations yet. V3 requires later weekly snapshots before a horizon can be evaluated."])
+    bt["A8"]="Score-Bucket Backtest"; bt["A8"].font=Font(bold=True,size=13)
+    header(bt,9,["Horizon","Score Bucket","Observations","Average Return","Median Return","Positive Rate"])
+    row=10
+    for s in buckets:
+        bt.append([s["horizon"],s["group"],s["observations"],s["avg_return"],s["median_return"],s["positive_rate"]])
+        for j in (4,5,6): bt.cell(row,j).number_format="0.0%"
+        row+=1
+    conf=wb.create_sheet("Backtest Diagnostics")
+    header(conf,1,["Dimension","Horizon","Group","Observations","Average Return","Median Return","Positive Rate","Average Score"])
+    row=2
+    for title,data in [("Confidence",conf_summary),("Research Signal",signal_summary),("Sector",sector_summary)]:
+        for s in data:
+            conf.append([title,s["horizon"],s["group"],s["observations"],s["avg_return"],s["median_return"],s["positive_rate"],s["avg_score"]])
+            for j in (5,6,7): conf.cell(row,j).number_format="0.0%"
+            row+=1
+    audit=wb.create_sheet("Research Audit")
+    header(audit,1,["Audit Item","Current State","Interpretation"])
+    audit_rows=[
+      ("Universe size",len(rows),"Expected 100 active members; verify against the latest official EGX constituent extract."),
+      ("Unique tickers",len({r["ticker"] for r in rows}),"Should equal universe size."),
+      ("Sector registry coverage",sum(r.get("sector_source")=="Controlled sector registry" for r in rows),"Registry-based classifications are the most auditable current mapping."),
+      ("Low sector confidence",sum(r.get("sector_confidence")=="Low" for r in rows),"Requires manual classification review."),
+      ("Stock data source","StockAnalysis.com scrape","External scraped source; reconcile material fields to company/EGX disclosures before commercial use."),
+      ("Universe source","V2.6 configured EGX30 + EGX70 fallback","Replace with official dated EGX constituent extract when available."),
+      ("Backtest observations",len(observations),"Only completed future horizons are included; missing future prices are not fabricated."),
+    ]
+    for i,rowv in enumerate(audit_rows,2):
+        for j,x in enumerate(rowv,1): audit.cell(i,j,x).border=BORDER
+
 
     uv=wb.create_sheet("Universe History")
     up=Path(universe_path)
@@ -98,16 +127,16 @@ def build_excel_v3(rows,output_path,history_path="data/history_v3.csv",universe_
     mt.column_dimensions["A"].width=120
     notes=[
       "V3 is a quantitative research/screening system, not investment advice.",
-      "Universe is dated and stored internally to reduce survivorship bias. Official EGX constituent data should supersede the configured fallback when available.",
+      "Universe is dated and stored internally to reduce survivorship bias. The current V3 run uses the configured EGX30 + EGX70 fallback and should be reconciled to the latest official EGX constituent extract before commercial use.",
       "Banks/financials: P/E, P/B, Residual Income and DDM are economically appropriate when inputs exist.",
       "Residual Income starts from current BVPS and discounts excess returns over cost of equity; forecast ROE fades toward cost of equity.",
       "Real Estate: P/E, P/B, DCF, EV/EBITDA and Book NAV Proxy. Book NAV Proxy is explicitly not property-level NAV/SOTP.",
       "Holding Companies: SOTP is supported through an explicit component registry. If component data is absent, SOTP is not fabricated.",
       "Other corporates: P/E, DCF and EV/EBITDA.",
       "Base FV is the median of valid applicable methods. Bear/Bull are uncertainty bands around Base driven by valuation dispersion.",
-      "Opportunity Score retains the V2.6 weights until enough historical observations exist to test whether they add predictive value.",
+      "Opportunity Score retains the V2.6 weights until enough historical observations exist to test whether they add predictive value. Do not retune weights weekly.",
       "Forward Validation measures 1/3/6/12-month realized price returns using only future weekly snapshots; it never invents missing prices.",
-      "No commercial performance claim should be made until the model has accumulated sufficient out-of-sample observations and the data provenance has been reconciled with official/company disclosures."
+      "Backtest results are descriptive out-of-sample validation, not a promise of future returns. No commercial performance claim should be made until sufficient observations, benchmark context, and data-provenance reconciliation are available."
     ]
     for i,n in enumerate(notes,2): mt.cell(i,1,n); mt.cell(i,1).alignment=Alignment(wrap_text=True,vertical="top"); mt.row_dimensions[i].height=32
     for sh in wb.worksheets: sh.sheet_view.showGridLines=False
