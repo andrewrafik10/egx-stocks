@@ -60,6 +60,8 @@ class CompanyFundamentals:
     ebitda: Optional[float] = None
     sector: Optional[str] = None
     beta: Optional[float] = None
+    dividend_per_share: Optional[float] = None
+    dividend_payout_ratio: Optional[float] = None
 
     errors: list = field(default_factory=list)
 
