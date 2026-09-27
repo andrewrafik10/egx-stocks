@@ -171,6 +171,7 @@ def score_one_v3(ticker,cf,peer_stats):
       "confidence":label,"opportunity_score":opportunity,"data_completeness":completeness,
       "valuation_coverage":coverage,"red_flags":flags,
       "research_status":"Review Required" if flags else "Quantitative Pass",
+      "dividend_per_share":getattr(cf,"dividend_per_share",None),"dividend_payout_ratio":getattr(cf,"dividend_payout_ratio",None),
       "discount_rate":_cost_of_equity(cf)[0],"discount_rate_source":_cost_of_equity(cf)[1]
     }
 
