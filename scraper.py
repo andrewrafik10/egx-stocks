@@ -174,7 +174,7 @@ def fetch_ticker(ticker: str) -> CompanyFundamentals:
                 if cf.eps is None:
                     cf.eps = _first_numeric_row(df, "EPS \\(Basic\\)") or _first_numeric_row(df, "EPS \\(Diluted\\)")
                 if cf.ebitda is None:
-                    cf.ebitda = _first_numeric_row(df, "^EBITDA$")
+                    cf.ebitda = _first_numeric_row(df, "^EBITDA$")\n                if cf.dividend_per_share is None:\n                    cf.dividend_per_share = (_first_numeric_row(df, "Dividend Per Share") or _first_numeric_row(df, "^DPS$"))\n                if cf.dividend_payout_ratio is None:\n                    cf.dividend_payout_ratio = (_first_numeric_row(df, "Payout Ratio") or _first_numeric_row(df, "Dividend Payout"))
                 if cf.beta is None:
                     cf.beta = (_first_numeric_row(df, "Beta \(5Y Monthly\)")
                                or _first_numeric_row(df, "^Beta$"))
@@ -282,7 +282,7 @@ def fetch_universe(tickers: list) -> dict:
                 f"total_equity={cf.total_equity} total_debt={cf.total_debt} cash={cf.cash} "
                 f"bvps={cf.book_value_per_share} ocf={cf.operating_cash_flow} "
                 f"capex={cf.capex} fcf={cf.free_cash_flow} fcf_history={cf.fcf_history} "
-                f"ebitda={cf.ebitda} beta={cf.beta}"
+                f"ebitda={cf.ebitda} beta={cf.beta} dps={cf.dividend_per_share} payout={cf.dividend_payout_ratio}"
             )
         if cf.errors:
             log.warning(f"{t}: {cf.errors}")
