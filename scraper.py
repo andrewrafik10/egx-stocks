@@ -233,6 +233,10 @@ def fetch_ticker(ticker: str) -> CompanyFundamentals:
             for df in tables:
                 if cf.ebitda is None:
                     cf.ebitda = _first_numeric_row(df, "^EBITDA$")
+                if cf.dividend_per_share is None:
+                    cf.dividend_per_share = (_first_numeric_row(df, "Dividend Per Share") or _first_numeric_row(df, "^DPS$"))
+                if cf.dividend_payout_ratio is None:
+                    cf.dividend_payout_ratio = (_first_numeric_row(df, "Payout Ratio") or _first_numeric_row(df, "Dividend Payout"))
         except ValueError:
             pass
 
