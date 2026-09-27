@@ -9,7 +9,7 @@ FIELDS = [
     "as_of_date","ticker","company_name","sector","price",
     "fair_value_bear","fair_value_base","fair_value_bull",
     "base_upside","dispersion","quality_score","opportunity_score",
-    "confidence_score","confidence","data_completeness","methods_used",
+    "confidence_score","confidence","data_completeness","valuation_coverage","valuation_score","research_status","red_flags","methods_used",
     "pe","pb","dcf","comps","roe","net_margin","ebitda_margin",
     "fcf_margin","debt_equity","eps_growth","revenue_growth","beta","discount_rate","discount_rate_source"
 ]
@@ -45,6 +45,10 @@ def append_snapshot(rows, path=HISTORY_PATH):
             "confidence_score": r.get("confidence_score"),
             "confidence": r.get("confidence"),
             "data_completeness": r.get("data_completeness"),
+            "valuation_coverage": r.get("valuation_coverage"),
+            "valuation_score": r.get("valuation_score"),
+            "research_status": r.get("research_status"),
+            "red_flags": "; ".join(r.get("red_flags", [])),
             "methods_used": r.get("methods_used"),
             "pe": m.get("pe"), "pb": m.get("pb"),
             "dcf": r["valuations"].get("dcf"),
