@@ -54,7 +54,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: egx-v25-report-${{ github.run_number }}
-          path: output/egx_weekly_v2_report_*.xlsx
+          path: output/egx_weekly_v26_report_*.xlsx
           if-no-files-found: error
           retention-days: 90
 
