@@ -1,4 +1,4 @@
-"""V2.5 report wrapper: preserves V2 workbook and adds audit/history/backtest tabs."""
+"""V2.6 report wrapper: preserves V2 workbook and adds audit/history/backtest tabs."""
 from pathlib import Path
 from datetime import date
 import csv
@@ -22,18 +22,18 @@ def build_excel_v25(rows, all_cf, output_path, history_path="data/history.csv"):
     # Rename the main title to make the version explicit.
     ws = wb["Executive Summary"]
     ws["A1"] = "EGX100 V2.5 Fundamental Research Report"
-    ws["A3"] = ws["A3"].value.replace("V2 sector-aware", "V2.5 sector-aware") if ws["A3"].value else "V2.5"
+    ws["A3"] = ws["A3"].value.replace("V2 sector-aware", "V2.6 sector-aware") if ws["A3"].value else "V2.5"
 
     audit = wb.create_sheet("Data Quality")
-    audit.append(["Ticker","Sector","Data Completeness","Methods","Confidence","Confidence Score","Valuation Dispersion","Scraper Errors"])
+    audit.append(["Ticker","Company","Sector","Data Completeness","Valuation Coverage","Methods","Confidence","Confidence Score","Valuation Score","Quality Score","Status","Red Flags","Scraper Errors"])
     for cell in audit[1]:
         cell.font = Font(bold=True,color="FFFFFF")
         cell.fill = PatternFill("solid",fgColor="1F4E78")
     for r in rows:
         audit.append([
-            r["ticker"],r["sector"],r["data_completeness"]/100,r["methods_used"],
-            r["confidence"],r["confidence_score"],r["dispersion"],
-            "; ".join(r["errors"])
+            r["ticker"],r.get("company_name") or "",r["sector"],r["data_completeness"]/100,r["valuation_coverage"],r["methods_used"],
+            r["confidence"],r["confidence_score"],r["valuation_score"],r["quality_score"],r["research_status"],
+            "; ".join(r["red_flags"]),"; ".join(r["errors"])
         ])
     for row in audit.iter_rows(min_row=2,min_col=3,max_col=3):
         row[0].number_format="0%"
@@ -61,17 +61,17 @@ def build_excel_v25(rows, all_cf, output_path, history_path="data/history.csv"):
     ass.column_dimensions["A"].width=32
     ass.column_dimensions["B"].width=100
     items = [
-        ("Report version","V2.5"),
+        ("Report version","V2.6"),
         ("Generated",date.today().isoformat()),
-        ("Sector classification","Manual overrides -> controlled keyword taxonomy -> Unclassified; unknown names are not forced into a sector."),
+        ("Sector classification","V2.6 controlled EGX100 ticker taxonomy -> scraped industry keyword fallback -> Unclassified only when unresolved."),
         ("Financial valuation","P/E + peer P/B; corporate DCF/EV-EBITDA are excluded."),
-        ("Real-estate valuation","P/E/P/B + DCF + EV/EBITDA where valid; full NAV is a V3 target."),
+        ("Real-estate valuation","P/E/P/B + DCF + EV/EBITDA where valid; true property NAV/SOTP remains a future upgrade."),
         ("Corporate valuation","P/E + DCF + EV/EBITDA where valid."),
-        ("Fair value","Median of valid methods; bear/base/bull range; method dispersion is explicitly reported."),
-        ("Opportunity Score","Current V2 weights remain research assumptions and are not treated as statistically validated until backtesting."),
+        ("Fair value","Median of valid applicable methods; Bear/Base/Bull are an uncertainty range around Base driven by method dispersion, not separate earnings forecasts."),
+        ("Opportunity Score","V2.6 combines Valuation, Quality and Confidence. Weights remain research assumptions until validated by historical backtesting."),
         ("History","Each successful weekly run stores the signal snapshot by ticker/date in data/history.csv."),
         ("Backtest","1-week, 4-week and 12-week realized returns are measured only when future snapshots exist."),
-        ("Data provenance","Current fundamental source remains StockAnalysis scraping; official-company/EGX reconciliation is required before client distribution."),
+        ("Data provenance","Current fundamental source remains automated StockAnalysis scraping; key data and assumptions require official EGX/company reconciliation before client distribution."),
         ("Research status","Quantitative research/screening only; not investment advice.")
     ]
     for i,(a,b) in enumerate(items,1):
