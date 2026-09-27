@@ -31,7 +31,7 @@ def main():
     # اكتب داخل workspace (أثبت على GitHub Actions من /tmp)
     out_dir = Path.cwd() / "output"
     out_dir.mkdir(parents=True, exist_ok=True)
-    excel_path = out_dir / f"egx_weekly_v2_report_{date.today().isoformat()}.xlsx"
+    excel_path = out_dir / f"egx_weekly_v26_report_{date.today().isoformat()}.xlsx"
 
     history_path = append_snapshot(ranked)
     log.info("Historical signal snapshot saved: %s", history_path.resolve())
@@ -47,7 +47,7 @@ def main():
     log.info("Sending Excel workbook to Telegram...")
     usable = sum(1 for r in ranked if r.get("opportunity_score") is not None)
     caption = (
-        f"EGX Weekly Fundamental Scan — {date.today().strftime('%d %b %Y')} "
+        f"EGX Weekly V2.6 Fundamental Research — {date.today().strftime('%d %b %Y')} "
         f"({usable}/{len(ranked)} scored)"
     )
     send_document(str(excel_path), caption=caption)
