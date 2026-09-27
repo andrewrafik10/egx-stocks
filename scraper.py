@@ -174,8 +174,12 @@ def fetch_ticker(ticker: str) -> CompanyFundamentals:
                 if cf.eps is None:
                     cf.eps = _first_numeric_row(df, "EPS \\(Basic\\)") or _first_numeric_row(df, "EPS \\(Diluted\\)")
                 if cf.ebitda is None:
-                    cf.ebitda = _first_numeric_row(df, "^EBITDA$")\n                if cf.dividend_per_share is None:\n                    cf.dividend_per_share = (_first_numeric_row(df, "Dividend Per Share") or _first_numeric_row(df, "^DPS$"))\n                if cf.dividend_payout_ratio is None:\n                    cf.dividend_payout_ratio = (_first_numeric_row(df, "Payout Ratio") or _first_numeric_row(df, "Dividend Payout"))
-                if cf.beta is None:
+                if cf.ebitda is None:
+                    cf.ebitda = _first_numeric_row(df, "^EBITDA$")
+                if cf.dividend_per_share is None:
+                    cf.dividend_per_share = (_first_numeric_row(df, "Dividend Per Share") or _first_numeric_row(df, "^DPS$"))
+                if cf.dividend_payout_ratio is None:
+                    cf.dividend_payout_ratio = (_first_numeric_row(df, "Payout Ratio") or _first_numeric_row(df, "Dividend Payout"))
                     cf.beta = (_first_numeric_row(df, "Beta \(5Y Monthly\)")
                                or _first_numeric_row(df, "^Beta$"))
                 # collect EPS across all history columns present for growth-rate estimation
