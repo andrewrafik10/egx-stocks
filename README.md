@@ -36,7 +36,7 @@ EGX30 + EGX70 universe as a fallback; official EGX constituent extracts should
 supersede that fallback when available.
 
 The EGX publishes index constituent and methodology information through its
-index pages and periodic reviews. citeturn0search0turn0search9
+index pages and periodic reviews.
 
 ## Output policy
 
