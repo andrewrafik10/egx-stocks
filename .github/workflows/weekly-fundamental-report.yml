@@ -2,7 +2,7 @@ name: EGX Weekly Fundamental Report
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main","v3-development"]
     paths-ignore:
       - "data/**"
       - "output/**"
@@ -63,6 +63,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: egx-v3-history-${{ github.run_number }}
-          path: data/history_v3.csv
-data/universe_history.csv
+          path: |
+            data/history_v3.csv
+            data/universe_history.csv
           retention-days: 365
