@@ -31,6 +31,7 @@ def _residual_income(cf, sector):
     if roe is None or r<=0: return None
     g_terminal=min(config.V3_TERMINAL_GROWTH, max(0.0, roe*0.6))
     payout=getattr(cf,"dividend_payout_ratio",None)
+    if payout is not None and payout > 1: payout /= 100.0
     retention=1-(payout if payout is not None and 0<=payout<=1 else config.V3_DEFAULT_RETENTION)
     retention=max(0.0,min(0.9,retention))
     bv=cf.book_value_per_share
