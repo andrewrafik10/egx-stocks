@@ -46,13 +46,13 @@ def build_excel_v3(rows,output_path,history_path="data/history_v3.csv",universe_
     rd.auto_filter.ref=f"A1:S{len(rows)+1}"; rd.freeze_panes="E2"
 
     vd=wb.create_sheet("Valuation Detail")
-    h=["Ticker","Sector","Price","P/E FV","P/B FV","Residual Income FV","DDM FV","DCF FV","EV/EBITDA FV","Book NAV Proxy","SOTP FV","Bear FV","Base FV","Bull FV","Dispersion","Coverage","Notes"]
+    h=["Ticker","Sector","Price","DPS","Payout Ratio","P/E FV","P/B FV","Residual Income FV","DDM FV","DCF FV","EV/EBITDA FV","Book NAV Proxy","SOTP FV","Bear FV","Base FV","Bull FV","Dispersion","Coverage","Notes"]
     header(vd,1,h)
     for i,r in enumerate(rows,2):
         v=r["valuations"]; notes="; ".join(r["red_flags"])
-        vals=[r["ticker"],r["sector"],r["price"],v.get("pe"),v.get("pb"),v.get("residual_income"),v.get("ddm"),v.get("dcf"),v.get("ev_ebitda"),v.get("book_nav_proxy"),v.get("sotp"),r["fair_value_bear"],r["fair_value_base"],r["fair_value_bull"],r["dispersion"],r["valuation_coverage"],notes]
+        vals=[r["ticker"],r["sector"],r["price"],r.get("dividend_per_share"),r.get("dividend_payout_ratio"),v.get("pe"),v.get("pb"),v.get("residual_income"),v.get("ddm"),v.get("dcf"),v.get("ev_ebitda"),v.get("book_nav_proxy"),v.get("sotp"),r["fair_value_bear"],r["fair_value_base"],r["fair_value_bull"],r["dispersion"],r["valuation_coverage"],notes]
         for j,x in enumerate(vals,1): vd.cell(i,j,x).border=BORDER
-        vd.cell(i,15).number_format="0.0%"; vd.cell(i,16).number_format="0%"
+        vd.cell(i,17).number_format="0.0%"; vd.cell(i,18).number_format="0%"
 
     sec=wb.create_sheet("Sector Dashboard")
     header(sec,1,["Sector","Stocks","Median Base Upside","Avg Opportunity","Avg Quality","Avg Confidence","Median Coverage","Review Required"])
