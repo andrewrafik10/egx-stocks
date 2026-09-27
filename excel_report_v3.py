@@ -42,7 +42,7 @@ def build_excel_v3(rows,output_path,history_path="data/history_v3.csv",universe_
     for i,r in enumerate(rows,2):
         vals=[r["rank"],r["ticker"],r.get("company_name") or "",r["sector"],r.get("sector_source"),r.get("sector_confidence"),r.get("data_source"),r["price"],r["fair_value_bear"],r["fair_value_base"],r["fair_value_bull"],((r["fair_value_base"]-r["price"])/r["price"] if r["fair_value_base"] and r["price"] else None),r["dispersion"],r["valuation_score"],r["quality_score"],r["confidence"],r["confidence_score"],r["valuation_coverage"],r["opportunity_score"],r.get("research_signal"),"; ".join(r["red_flags"])]
         for j,v in enumerate(vals,1): rd.cell(i,j,v).border=BORDER
-        for j in (9,10,15): rd.cell(i,j).number_format="0.0%" if j!=15 else "0%"
+        for j in (12,13,18): rd.cell(i,j).number_format="0.0%" if j!=18 else "0%"
     rd.auto_filter.ref=f"A1:U{len(rows)+1}"; rd.freeze_panes="H2"
 
     vd=wb.create_sheet("Valuation Detail")
