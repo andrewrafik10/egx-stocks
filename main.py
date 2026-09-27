@@ -14,7 +14,9 @@ log=logging.getLogger(__name__)
 def main():
     members=get_universe()
     tickers=sorted({m.ticker for m in members if m.active})
-    log.info("V3 universe: %s tickers",len(tickers))
+    if len(tickers) != 100 or len(tickers) != len(set(tickers)):
+        raise ValueError(f"V3 universe integrity failure: expected 100 unique tickers, got {len(tickers)}")
+    log.info("V3 universe: %s unique tickers",len(tickers))
     all_cf=fetch_universe(tickers)
     ranked=rank_v3(all_cf)
     out=Path("output"); out.mkdir(exist_ok=True)
