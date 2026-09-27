@@ -15,7 +15,7 @@ def build_report(ranked, top_n=10):
     low = sum(r["confidence"] == "Low" for r in usable)
 
     lines = [
-        f"*EGX100 V2 Fundamental Research — {today}*",
+        f"*EGX100 V2.6 Fundamental Research — {today}*",
         f"_{len(usable)} of {len(ranked)} stocks scored_",
         f"Confidence: 🟢 {high} High | 🟡 {med} Medium | 🔴 {low} Low",
         "",
@@ -28,9 +28,9 @@ def build_report(ranked, top_n=10):
         lines.append(
             f"{i}. *{r['ticker']}* — Score {r['opportunity_score']:.1f} | {_pct(base_up)} base upside\n"
             f"   {r['sector']} | Price {r['price']:.2f} | Base FV {_fv(r['fair_value_base'])}\n"
-            f"   Range: {_fv(r['fair_value_bear'])}–{_fv(r['fair_value_bull'])} | "
-            f"Dispersion {_pct(r['dispersion'])} | Quality "
-            f"{r['quality_score'] if r['quality_score'] is not None else '—'}"
+            f"   Range: {_fv(r['fair_value_bear'])}–{_fv(r['fair_value_bull'])} | Dispersion {_pct(r['dispersion'])}\n"
+            f"   Valuation {r['valuation_score'] if r['valuation_score'] is not None else '—'} | Quality {r['quality_score'] if r['quality_score'] is not None else '—'} | Confidence {r['confidence']}\n"
+            f"   Coverage {r['valuation_coverage']:.0%} | Status {r['research_status']}"
         )
 
     lines += [
