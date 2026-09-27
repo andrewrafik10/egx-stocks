@@ -19,6 +19,33 @@ def v3_sector(cf,ticker):
         return "Holding Companies"
     return s
 
+def sector_provenance(cf,ticker):
+    """Return auditable sector source and confidence.
+    Overrides are the controlled V3 registry; otherwise the scraper industry
+    text is mapped by the V2.6 keyword taxonomy; unresolved means low confidence.
+    """
+    try:
+        overrides = __import__("v2_engine")._SECTOR_OVERRIDES
+    except Exception:
+        overrides = {}
+    if ticker in overrides:
+        return "Controlled sector registry", "High"
+    if getattr(cf, "sector", None):
+        s = macro_sector(cf, ticker)
+        return ("Scraped industry → macro taxonomy", "Medium" if s != "Unclassified" else "Low")
+    return "Unavailable", "Low"
+
+def research_signal(confidence, coverage, dispersion, flags):
+    if confidence == "High" and coverage >= 0.75 and (dispersion is None or dispersion <= 0.50) and not flags:
+        return "High Conviction Research"
+    if flags and any("unavailable" in f.lower() or "missing" in f.lower() or "unresolved" in f.lower() for f in flags):
+        return "Data Limited"
+    if dispersion is not None and dispersion > 0.50:
+        return "Deep Research Required"
+    if confidence == "Low" or coverage < 0.50:
+        return "Data Limited"
+    return "Standard Research Review"
+
 def _peer_stats_v3(all_cf):
     base=build_peer_stats(all_cf)
     return base
@@ -130,7 +157,7 @@ def applicable_v3(cf,ticker,sector):
     return ["pe","dcf","ev_ebitda"]
 
 def score_one_v3(ticker,cf,peer_stats):
-    sector=v3_sector(cf,ticker); peers=peer_stats.get(macro_sector(cf,ticker),{})
+    sector=v3_sector(cf,ticker); sector_source,sector_confidence=sector_provenance(cf,ticker); peers=peer_stats.get(macro_sector(cf,ticker),{})
     m=metrics(cf); vals=valuation_v3(cf,ticker,sector,peers)
     applicable=applicable_v3(cf,ticker,sector)
     valid=[vals[k] for k in applicable if vals.get(k) is not None and vals[k]>0]
@@ -163,14 +190,17 @@ def score_one_v3(ticker,cf,peer_stats):
     if cf.eps is None: flags.append("Missing EPS")
     if cf.book_value_per_share is None: flags.append("Missing BVPS")
     if cf.free_cash_flow is not None and cf.free_cash_flow<0: flags.append("Negative free cash flow")
+    signal=research_signal(label, coverage, dispersion, flags)
     return {
       "version":"V3","ticker":ticker,"company_name":cf.company_name,"price":cf.price,"sector":sector,
+      "sector_source":sector_source,"sector_confidence":sector_confidence,
+      "data_source":"StockAnalysis.com scrape",
       "metrics":m,"peer":peers,"valuations":vals,"applicable_methods":applicable,"methods_used":len(valid),
       "fair_value_bear":bear,"fair_value_base":base,"fair_value_bull":bull,"dispersion":dispersion,
       "valuation_score":valuation_score,"quality_score":quality,"confidence_score":round(confidence,1),
       "confidence":label,"opportunity_score":opportunity,"data_completeness":completeness,
       "valuation_coverage":coverage,"red_flags":flags,
-      "research_status":"Review Required" if flags else "Quantitative Pass",
+      "research_status":"Review Required" if flags else "Quantitative Pass", "research_signal":signal,
       "dividend_per_share":getattr(cf,"dividend_per_share",None),"dividend_payout_ratio":getattr(cf,"dividend_payout_ratio",None),
       "discount_rate":_cost_of_equity(cf)[0],"discount_rate_source":_cost_of_equity(cf)[1]
     }
