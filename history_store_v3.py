@@ -3,7 +3,7 @@ from pathlib import Path
 from datetime import date
 import csv
 
-FIELDS=["as_of_date","version","ticker","company_name","sector","price","fair_value_bear","fair_value_base","fair_value_bull","base_upside","dispersion","valuation_score","quality_score","confidence_score","confidence","opportunity_score","data_completeness","valuation_coverage","methods_used","applicable_methods","research_status","red_flags","pe","pb","residual_income","ddm","dcf","ev_ebitda","book_nav_proxy","sotp","roe","eps_growth","revenue_growth","beta","discount_rate","discount_rate_source"]
+FIELDS=["as_of_date","version","ticker","company_name","sector","price","fair_value_bear","fair_value_base","fair_value_bull","base_upside","dispersion","valuation_score","quality_score","confidence_score","confidence","opportunity_score","data_completeness","valuation_coverage","methods_used","applicable_methods","research_status","red_flags","pe","pb","residual_income","ddm","dcf","ev_ebitda","book_nav_proxy","sotp","roe","eps_growth","revenue_growth","beta","dividend_per_share","dividend_payout_ratio","discount_rate","discount_rate_source"]
 
 def append_snapshot(rows,path="data/history_v3.csv"):
     p=Path(path); p.parent.mkdir(parents=True,exist_ok=True); existing={}
@@ -26,7 +26,7 @@ def append_snapshot(rows,path="data/history_v3.csv"):
           "pe":m.get("pe"),"pb":m.get("pb"),"residual_income":v.get("residual_income"),"ddm":v.get("ddm"),
           "dcf":v.get("dcf"),"ev_ebitda":v.get("ev_ebitda"),"book_nav_proxy":v.get("book_nav_proxy"),"sotp":v.get("sotp"),
           "roe":m.get("roe"),"eps_growth":m.get("eps_growth"),"revenue_growth":m.get("revenue_growth"),
-          "beta":m.get("beta"),"discount_rate":r.get("discount_rate"),"discount_rate_source":r.get("discount_rate_source")
+          "beta":m.get("beta"),"dividend_per_share":getattr(r.get("_cf"),"dividend_per_share",None),"dividend_payout_ratio":getattr(r.get("_cf"),"dividend_payout_ratio",None),"discount_rate":r.get("discount_rate"),"discount_rate_source":r.get("discount_rate_source")
         }
     with p.open("w",newline="",encoding="utf-8") as f:
         w=csv.DictWriter(f,fieldnames=FIELDS); w.writeheader()
