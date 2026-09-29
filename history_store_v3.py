@@ -3,7 +3,7 @@ from pathlib import Path
 from datetime import date
 import csv
 
-FIELDS=["as_of_date","version","ticker","company_name","sector","sector_source","sector_confidence","data_source","price","fair_value_bear","fair_value_base","fair_value_bull","base_upside","dispersion","valuation_score","quality_score","confidence_score","confidence","opportunity_score","data_completeness","valuation_coverage","methods_used","applicable_methods","research_status","research_signal","red_flags","pe","pb","residual_income","ddm","dcf","ev_ebitda","book_nav_proxy","sotp","roe","eps_growth","revenue_growth","beta","dividend_per_share","dividend_payout_ratio","discount_rate","discount_rate_source"]
+FIELDS=["as_of_date","version","ticker","company_name","sector","sector_source","sector_confidence","data_source","price","fair_value_bear","fair_value_base","fair_value_bull","base_upside","dispersion","valuation_score","quality_score","confidence_score","confidence","opportunity_score","data_completeness","valuation_coverage","methods_used","applicable_methods","research_status","research_signal","red_flags","pe","pb","residual_income","ddm","dcf","ev_ebitda","book_nav_proxy","sotp","roe","eps_growth","revenue_growth","beta","dividend_per_share","dividend_payout_ratio","discount_rate","discount_rate_source","investingpro_fair_value","investingpro_fair_value_upside","investingpro_as_of_date","investingpro_source","investingpro_status"]
 
 def append_snapshot(rows,path="data/history_v3.csv"):
     p=Path(path); p.parent.mkdir(parents=True,exist_ok=True); existing={}
@@ -26,7 +26,7 @@ def append_snapshot(rows,path="data/history_v3.csv"):
           "pe":m.get("pe"),"pb":m.get("pb"),"residual_income":v.get("residual_income"),"ddm":v.get("ddm"),
           "dcf":v.get("dcf"),"ev_ebitda":v.get("ev_ebitda"),"book_nav_proxy":v.get("book_nav_proxy"),"sotp":v.get("sotp"),
           "roe":m.get("roe"),"eps_growth":m.get("eps_growth"),"revenue_growth":m.get("revenue_growth"),
-          "beta":m.get("beta"),"dividend_per_share":r.get("dividend_per_share"),"dividend_payout_ratio":r.get("dividend_payout_ratio"),"discount_rate":r.get("discount_rate"),"discount_rate_source":r.get("discount_rate_source")
+          "beta":m.get("beta"),"investingpro_fair_value":r.get("investingpro_fair_value"),"investingpro_fair_value_upside":r.get("investingpro_fair_value_upside"),"investingpro_as_of_date":r.get("investingpro_as_of_date"),"investingpro_source":r.get("investingpro_source"),"investingpro_status":r.get("investingpro_status"),"dividend_per_share":r.get("dividend_per_share"),"dividend_payout_ratio":r.get("dividend_payout_ratio"),"discount_rate":r.get("discount_rate"),"discount_rate_source":r.get("discount_rate_source")
         }
     with p.open("w",newline="",encoding="utf-8") as f:
         w=csv.DictWriter(f,fieldnames=FIELDS); w.writeheader()
