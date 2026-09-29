@@ -37,22 +37,22 @@ def build_excel_v3(rows,output_path,history_path="data/history_v3.csv",universe_
     for j,w in enumerate([7,10,22,11,12,13,12,12,38,12,12,11,13,15,11,12,12,24],1): ws.column_dimensions[get_column_letter(j)].width=w
 
     rd=wb.create_sheet("V3 Ranking")
-    h=["Rank","Ticker","Company","Sector","Sector Source","Sector Confidence","Data Source","Price","Bear FV","Base FV","Bull FV","Base Upside","Dispersion","Valuation Score","Quality Score","Confidence","Confidence Score","Coverage","Opportunity Score","Research Signal","Red Flags"]
+    h=["Rank","Ticker","Company","Sector","Sector Source","Sector Confidence","Data Source","Price","Bear FV","Base FV","Bull FV","Base Upside","InvestingPro FV","InvestingPro Upside","FV Gap vs V3","Dispersion","Valuation Score","Quality Score","Confidence","Confidence Score","Coverage","Opportunity Score","Research Signal","Red Flags"]
     header(rd,1,h)
     for i,r in enumerate(rows,2):
-        vals=[r["rank"],r["ticker"],r.get("company_name") or "",r["sector"],r.get("sector_source"),r.get("sector_confidence"),r.get("data_source"),r["price"],r["fair_value_bear"],r["fair_value_base"],r["fair_value_bull"],((r["fair_value_base"]-r["price"])/r["price"] if r["fair_value_base"] and r["price"] else None),r["dispersion"],r["valuation_score"],r["quality_score"],r["confidence"],r["confidence_score"],r["valuation_coverage"],r["opportunity_score"],r.get("research_signal"),"; ".join(r["red_flags"])]
+        vals=[r["rank"],r["ticker"],r.get("company_name") or "",r["sector"],r.get("sector_source"),r.get("sector_confidence"),r.get("data_source"),r["price"],r["fair_value_bear"],r["fair_value_base"],r["fair_value_bull"],((r["fair_value_base"]-r["price"])/r["price"] if r["fair_value_base"] and r["price"] else None),r.get("investingpro_fair_value"),r.get("investingpro_fair_value_upside"),((r.get("investingpro_fair_value")-r["fair_value_base"])/r["fair_value_base"] if r.get("investingpro_fair_value") and r.get("fair_value_base") else None),r["dispersion"],r["valuation_score"],r["quality_score"],r["confidence"],r["confidence_score"],r["valuation_coverage"],r["opportunity_score"],r.get("research_signal"),"; ".join(r["red_flags"])]
         for j,v in enumerate(vals,1): rd.cell(i,j,v).border=BORDER
-        for j in (12,13,18): rd.cell(i,j).number_format="0.0%" if j!=18 else "0%"
+        for j in (12,14,15,16,21): rd.cell(i,j).number_format="0.0%" if j!=21 else "0%"
     rd.auto_filter.ref=f"A1:U{len(rows)+1}"; rd.freeze_panes="H2"
 
     vd=wb.create_sheet("Valuation Detail")
-    h=["Ticker","Sector","Price","DPS","Payout Ratio","P/E FV","P/B FV","Residual Income FV","DDM FV","DCF FV","EV/EBITDA FV","Book NAV Proxy","SOTP FV","Bear FV","Base FV","Bull FV","Dispersion","Coverage","Notes"]
+    h=["Ticker","Sector","Price","DPS","Payout Ratio","P/E FV","P/B FV","Residual Income FV","DDM FV","DCF FV","EV/EBITDA FV","Book NAV Proxy","SOTP FV","V3 Bear FV","V3 Base FV","V3 Bull FV","InvestingPro FV","InvestingPro Upside","FV Gap vs V3","InvestingPro As Of","InvestingPro Status","Dispersion","Coverage","Notes"]
     header(vd,1,h)
     for i,r in enumerate(rows,2):
         v=r["valuations"]; notes="; ".join(r["red_flags"])
-        vals=[r["ticker"],r["sector"],r["price"],r.get("dividend_per_share"),r.get("dividend_payout_ratio"),v.get("pe"),v.get("pb"),v.get("residual_income"),v.get("ddm"),v.get("dcf"),v.get("ev_ebitda"),v.get("book_nav_proxy"),v.get("sotp"),r["fair_value_bear"],r["fair_value_base"],r["fair_value_bull"],r["dispersion"],r["valuation_coverage"],notes]
+        vals=[r["ticker"],r["sector"],r["price"],r.get("dividend_per_share"),r.get("dividend_payout_ratio"),v.get("pe"),v.get("pb"),v.get("residual_income"),v.get("ddm"),v.get("dcf"),v.get("ev_ebitda"),v.get("book_nav_proxy"),v.get("sotp"),r["fair_value_bear"],r["fair_value_base"],r["fair_value_bull"],r.get("investingpro_fair_value"),r.get("investingpro_fair_value_upside"),((r.get("investingpro_fair_value")-r["fair_value_base"])/r["fair_value_base"] if r.get("investingpro_fair_value") and r.get("fair_value_base") else None),r.get("investingpro_as_of_date"),r.get("investingpro_status"),r["dispersion"],r["valuation_coverage"],notes]
         for j,x in enumerate(vals,1): vd.cell(i,j,x).border=BORDER
-        vd.cell(i,17).number_format="0.0%"; vd.cell(i,18).number_format="0%"
+        for j in (18,19,22): vd.cell(i,j).number_format="0.0%" if j!=22 else "0%"
 
     sec=wb.create_sheet("Sector Dashboard")
     header(sec,1,["Sector","Stocks","Median Base Upside","Avg Opportunity","Avg Quality","Avg Confidence","Median Coverage","Review Required"])
@@ -112,6 +112,7 @@ def build_excel_v3(rows,output_path,history_path="data/history_v3.csv",universe_
       ("Stock data source","StockAnalysis.com scrape","External scraped source; reconcile material fields to company/EGX disclosures before commercial use."),
       ("Universe source","V2.6 configured EGX30 + EGX70 fallback","Replace with official dated EGX constituent extract when available."),
       ("Backtest observations",len(observations),"Only completed future horizons are included; missing future prices are not fabricated."),
+      ("InvestingPro Fair Value coverage",sum(r.get("investingpro_fair_value") is not None for r in rows),"Only verified InvestingPro values are counted; locked/unverified values remain blank."),
     ]
     for i,rowv in enumerate(audit_rows,2):
         for j,x in enumerate(rowv,1): audit.cell(i,j,x).border=BORDER
@@ -136,7 +137,8 @@ def build_excel_v3(rows,output_path,history_path="data/history_v3.csv",universe_
       "Base FV is the median of valid applicable methods. Bear/Bull are uncertainty bands around Base driven by valuation dispersion.",
       "Opportunity Score retains the V2.6 weights until enough historical observations exist to test whether they add predictive value. Do not retune weights weekly.",
       "Forward Validation measures 1/3/6/12-month realized price returns using only future weekly snapshots; it never invents missing prices.",
-      "Backtest results are descriptive out-of-sample validation, not a promise of future returns. No commercial performance claim should be made until sufficient observations, benchmark context, and data-provenance reconciliation are available."
+      "Backtest results are descriptive out-of-sample validation, not a promise of future returns. No commercial performance claim should be made until sufficient observations, benchmark context, and data-provenance reconciliation are available.",
+      "InvestingPro Fair Value is an external benchmark and is not used to calculate V3 Base FV, Opportunity Score, or ranking. Exact values must come from a verified InvestingPro source/export; public pages may lock the value."
     ]
     for i,n in enumerate(notes,2): mt.cell(i,1,n); mt.cell(i,1).alignment=Alignment(wrap_text=True,vertical="top"); mt.row_dimensions[i].height=32
     for sh in wb.worksheets: sh.sheet_view.showGridLines=False
