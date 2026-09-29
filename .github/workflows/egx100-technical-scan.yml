@@ -2,6 +2,9 @@ name: EGX100 Technical Scan
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - feature/egx100-technical-scanner
   schedule:
     # Egypt's Sunday-Thursday trading week; run after the session.
     - cron: "30 15 * * 0-4"
