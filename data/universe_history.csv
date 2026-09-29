@@ -1,0 +1,201 @@
+as_of_date,ticker,index_name,active,source
+2026-09-27,ABUK,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,ACAP,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,ADIB,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,ALCN,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,AMES,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,AMIA,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,AMOC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,ARAB,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,ARCC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,ATQA,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,AXPH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,BINV,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,BIOC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,BONY,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,BTFH,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,CANA,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,CCAP,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,CICH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,CIEB,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,CIRA,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,CLHO,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,CNFN,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,COMI,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,CPCI,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,CSAG,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,DOMT,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,EAST,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,EFIC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,EFID,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,EFIH,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,EGAL,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,EGAS,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,EGBE,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,EGCH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,EGSA,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,EGTS,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,ELEC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,EMFD,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,ENGC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,ETEL,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,EXPA,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,FAIT,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,FERC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,FWRY,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,GBCO,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,GOUR,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,HDBK,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,HELI,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,HRHO,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,IFAP,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,IRON,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,ISMQ,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,ISPH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,JUFO,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,KORA,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,MASR,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,MBSC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,MCQE,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,MFPC,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,MHOT,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,MICH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,MIPH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,MOIL,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,MOIN,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,MPCI,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,MPRC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,MTIE,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,NAPR,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,NINH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,NIPH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,OCDI,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,OCPH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,OIH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,OLFI,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,ORAS,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,ORHD,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,ORWE,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,PHAR,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,PHDC,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,PHTV,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,POUL,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,PRDC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,QNBE,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,RAYA,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,RMDA,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,SAUD,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,SCEM,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,SCTS,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,SKPC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,SPHT,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,SPIN,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,SUGR,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,SVCE,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,SWDY,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,TALM,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,TAQA,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,TMGH,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,UBEE,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,VALU,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-27,ZMID,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,ABUK,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,ACAP,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,ADIB,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,ALCN,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,AMES,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,AMIA,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,AMOC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,ARAB,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,ARCC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,ATQA,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,AXPH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,BINV,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,BIOC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,BONY,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,BTFH,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,CANA,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,CCAP,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,CICH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,CIEB,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,CIRA,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,CLHO,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,CNFN,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,COMI,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,CPCI,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,CSAG,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,DOMT,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,EAST,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,EFIC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,EFID,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,EFIH,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,EGAL,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,EGAS,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,EGBE,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,EGCH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,EGSA,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,EGTS,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,ELEC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,EMFD,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,ENGC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,ETEL,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,EXPA,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,FAIT,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,FERC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,FWRY,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,GBCO,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,GOUR,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,HDBK,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,HELI,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,HRHO,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,IFAP,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,IRON,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,ISMQ,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,ISPH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,JUFO,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,KORA,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,MASR,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,MBSC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,MCQE,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,MFPC,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,MHOT,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,MICH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,MIPH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,MOIL,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,MOIN,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,MPCI,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,MPRC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,MTIE,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,NAPR,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,NINH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,NIPH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,OCDI,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,OCPH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,OIH,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,OLFI,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,ORAS,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,ORHD,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,ORWE,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,PHAR,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,PHDC,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,PHTV,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,POUL,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,PRDC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,QNBE,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,RAYA,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,RMDA,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,SAUD,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,SCEM,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,SCTS,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,SKPC,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,SPHT,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,SPIN,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,SUGR,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,SVCE,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,SWDY,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,TALM,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,TAQA,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,TMGH,EGX30,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,UBEE,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,VALU,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot
+2026-09-29,ZMID,EGX70 EWI,true,V2.6 configured EGX30 + EGX70 snapshot

@@ -60,6 +60,8 @@ class CompanyFundamentals:
     ebitda: Optional[float] = None
     sector: Optional[str] = None
     beta: Optional[float] = None
+    dividend_per_share: Optional[float] = None
+    dividend_payout_ratio: Optional[float] = None
 
     errors: list = field(default_factory=list)
 
@@ -173,6 +175,10 @@ def fetch_ticker(ticker: str) -> CompanyFundamentals:
                     cf.eps = _first_numeric_row(df, "EPS \\(Basic\\)") or _first_numeric_row(df, "EPS \\(Diluted\\)")
                 if cf.ebitda is None:
                     cf.ebitda = _first_numeric_row(df, "^EBITDA$")
+                if cf.dividend_per_share is None:
+                    cf.dividend_per_share = (_first_numeric_row(df, "Dividend Per Share") or _first_numeric_row(df, "^DPS$"))
+                if cf.dividend_payout_ratio is None:
+                    cf.dividend_payout_ratio = (_first_numeric_row(df, "Payout Ratio") or _first_numeric_row(df, "Dividend Payout"))
                 if cf.beta is None:
                     cf.beta = (_first_numeric_row(df, "Beta \(5Y Monthly\)")
                                or _first_numeric_row(df, "^Beta$"))
@@ -231,6 +237,10 @@ def fetch_ticker(ticker: str) -> CompanyFundamentals:
             for df in tables:
                 if cf.ebitda is None:
                     cf.ebitda = _first_numeric_row(df, "^EBITDA$")
+                if cf.dividend_per_share is None:
+                    cf.dividend_per_share = (_first_numeric_row(df, "Dividend Per Share") or _first_numeric_row(df, "^DPS$"))
+                if cf.dividend_payout_ratio is None:
+                    cf.dividend_payout_ratio = (_first_numeric_row(df, "Payout Ratio") or _first_numeric_row(df, "Dividend Payout"))
         except ValueError:
             pass
 
@@ -280,7 +290,7 @@ def fetch_universe(tickers: list) -> dict:
                 f"total_equity={cf.total_equity} total_debt={cf.total_debt} cash={cf.cash} "
                 f"bvps={cf.book_value_per_share} ocf={cf.operating_cash_flow} "
                 f"capex={cf.capex} fcf={cf.free_cash_flow} fcf_history={cf.fcf_history} "
-                f"ebitda={cf.ebitda} beta={cf.beta}"
+                f"ebitda={cf.ebitda} beta={cf.beta} dps={cf.dividend_per_share} payout={cf.dividend_payout_ratio}"
             )
         if cf.errors:
             log.warning(f"{t}: {cf.errors}")

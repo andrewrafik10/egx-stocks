@@ -1,72 +1,60 @@
-# EGX Weekly Fundamental Bot
+# EGX100 V3 Fundamental Research Bot
 
-Scrapes fundamentals for EGX30 + EGX70 from stockanalysis.com, values each
-stock four ways (P/E vs sector, Graham Number, simplified DCF, EV/EBITDA
-comps), blends them into a ranked opportunity list, and sends it to Telegram
-every Friday via GitHub Actions.
+V3 is the next research layer after the frozen V2.6 engine. It keeps the V2.6
+history intact while adding sector-specific valuation and forward validation.
 
-## Setup
+## V3 architecture
 
-1. `pip install -r requirements.txt`
-2. Create a Telegram bot via @BotFather, get the token, and get your chat ID
-   (message the bot once, then hit `https://api.telegram.org/bot<TOKEN>/getUpdates`)
-3. Set env vars locally to test:
-   ```
-   export TELEGRAM_BOT_TOKEN=...
-   export TELEGRAM_CHAT_ID=...
-   python main.py
-   ```
-4. For GitHub Actions: add `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` as
-   repo secrets (Settings → Secrets and variables → Actions). The workflow
-   in `.github/workflows/weekly-fundamental-report.yml` runs every Friday
-   16:00 UTC and can also be triggered manually from the Actions tab.
+**Dated EGX100 universe → data collection → validation → sector classification →
+sector-specific valuation → quality/valuation/confidence → research signals →
+one Excel workbook → Telegram → internal historical CSV**
 
-## What's genuinely solid here vs. what needs your judgment
+### Sector valuation frameworks
 
-**Solid:**
-- Data source coverage (stockanalysis.com does cover all ~229 EGX tickers
-  with multi-year financials, confirmed by inspection)
-- The four valuation mechanics themselves (formulas are standard)
-- Ranking logic re-normalizes weights when a method doesn't apply to a
-  given stock, rather than silently zeroing it out
+- **Financials / banks:** P/E, P/B, Residual Income and DDM when inputs exist.
+- **Real Estate:** P/E, P/B, DCF, EV/EBITDA and Book NAV Proxy.
+- **Holding Companies:** SOTP is supported through an explicit component registry;
+  V3 never fabricates subsidiary values.
+- **Other corporates:** P/E, DCF and EV/EBITDA.
 
-**Needs your judgment / tuning before you trust the output:**
-1. **EGX30/EGX70 constituent lists in `config.py` are a market-cap-ranked
-   starting point, not the official index membership** — EGX reviews and
-   changes constituents twice a year. Verify against egx.com.eg before
-   relying on this.
-2. **Cost of equity / WACC is one flat 25% assumption for the whole market**
-   (`config.py`). Your own modeling portfolio uses CAPM-derived rates that
-   differ meaningfully by company (~23-24% for ETEL, ~27-28% for COMI) —
-   the bot would benefit a lot from a per-sector or per-stock rate rather
-   than one number for everyone. Straightforward to extend: add a
-   `sector_cost_of_equity` dict and look it up in `dcf_valuation()`.
-3. **Sector buckets are currently just "financials vs. everyone else"**
-   (`ranking.py: sector_benchmarks()`) for computing peer P/E and EV/EBITDA
-   medians. Real comps work wants tighter peer groups (banks vs. real
-   estate vs. consumer, etc.) — worth mapping each ticker to a proper
-   sector tag.
-4. **Graham Number is structurally weak for banks** (book value doesn't
-   mean the same thing for a leveraged balance sheet) — it's down-weighted
-   for tickers in `FINANCIAL_SECTOR_TICKERS`, not excluded. You may prefer
-   to exclude it outright for financials.
-5. **HTML table matching in `scraper.py` uses text-label matching**
-   (`"Net Income$"`, `"Book Value Per Share"`, etc.) against stockanalysis.com's
-   current row labels. If they change their page layout, these will silently
-   return `None` rather than error loudly — worth a periodic spot-check,
-   and each `CompanyFundamentals.errors` list flags what's missing per ticker
-   so you can see coverage gaps in the logs.
-6. **Not tested end-to-end** — I don't have network access to
-   stockanalysis.com from this sandbox to run it live, so treat the first
-   run as a debugging pass. Start with `workflow_dispatch` (manual trigger)
-   before trusting the Friday schedule.
+The base fair value is the median of valid applicable methods. Bear/Bull are
+uncertainty bands around Base based on method dispersion, not separate forecasts.
 
-## Extending
+## Validation
 
-- Swap the flat sector bucket for real GICS-style sectors
-- Add a second Telegram message with the full-universe CSV attached
-  (Telegram supports document uploads via `sendDocument`)
-- Track week-over-week rank changes (store last week's ranking in a JSON
-  file committed back to the repo, or in a small SQLite DB)
-- Feed the same fundamentals into your Excel-based sensitivity tables
-  for names that make the top 15
+V3 stores weekly signal snapshots in `data/history_v3.csv` and measures
+realized returns at **1, 3, 6 and 12 months** once future observations exist.
+
+V3 does not claim predictive performance until enough out-of-sample observations
+have accumulated.
+
+## Universe integrity
+
+V3 stores dated membership snapshots in `data/universe_history.csv` to reduce
+survivorship bias. The current branch preserves the verified V2.6 configured
+EGX30 + EGX70 universe as a fallback; official EGX constituent extracts should
+supersede that fallback when available.
+
+The EGX publishes index constituent and methodology information through its
+index pages and periodic reviews.
+
+## Output policy
+
+The weekly user-facing deliverable remains **one Excel workbook**. Historical
+CSV files are internal model state committed to GitHub.
+
+## Development
+
+V3 is being developed on `v3-development`. V2.6 remains frozen and is not
+rewritten while V3 is validated.
+
+
+## V3 validation discipline
+
+V3 now stores auditable sector provenance, data-source labels, and a research-signal classification. The weekly workbook includes Research Audit, Forward Validation, and Backtest Diagnostics.
+
+Backtesting is strictly out-of-sample: a signal dated T is evaluated only against a later stored price at or beyond 1/3/6/12 months. The engine also reports performance by Opportunity Score bucket, confidence, research signal, and sector. Missing future observations are skipped rather than fabricated.
+
+The Opportunity Score weights are intentionally frozen while observations accumulate. They should only be reconsidered after a meaningful out-of-sample sample exists.
+
+The current universe remains the configured EGX30 + EGX70 fallback and must be reconciled against the latest official EGX constituent extract before commercial use. Stock fundamentals are currently sourced by scrape and should be reconciled to company/EGX disclosures for material fields.

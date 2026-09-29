@@ -1,63 +1,31 @@
-"""
-Weekly EGX fundamental scan — entry point.
-Run manually: python main.py
-Scheduled via .github/workflows/weekly-fundamental-report.yml
-"""
-
+"""EGX100 V3 weekly research pipeline."""
 import logging
 from datetime import date
 from pathlib import Path
-
-import config
+from universe_v3 import get_universe
 from scraper import fetch_universe
-from v2_engine import rank_v2
-from report import build_report
-from v25_report import build_excel_v25
-from history_store import append_snapshot
-from telegram_sender import send_messages, send_document
-
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-log = logging.getLogger(__name__)
-
-
+from v3_engine import rank_v3
+from history_store_v3 import append_snapshot
+from excel_report_v3 import build_excel_v3
+from report_v3 import build_report
+from telegram_sender import send_messages,send_document
+logging.basicConfig(level=logging.INFO,format="%(asctime)s %(levelname)s %(message)s")
+log=logging.getLogger(__name__)
 def main():
-    log.info(f"Fetching fundamentals for {len(config.ALL_TICKERS)} tickers...")
-    all_cf = fetch_universe(config.ALL_TICKERS)
-
-    log.info("Running V2 sector-aware research engine...")
-    ranked = rank_v2(all_cf)
-
-    log.info("Building Excel workbook...")
-    # اكتب داخل workspace (أثبت على GitHub Actions من /tmp)
-    out_dir = Path.cwd() / "output"
-    out_dir.mkdir(parents=True, exist_ok=True)
-    excel_path = out_dir / f"egx_weekly_v26_report_{date.today().isoformat()}.xlsx"
-
-    history_path = append_snapshot(ranked)
-    log.info("Historical signal snapshot saved: %s", history_path.resolve())
-    build_excel_v25(ranked, all_cf, str(excel_path), str(history_path))
-
-    if not excel_path.exists() or excel_path.stat().st_size == 0:
-        raise FileNotFoundError(
-            f"Excel was not created or is empty: {excel_path.resolve()}"
-        )
-
-    log.info("Excel saved: %s (%s bytes)", excel_path.resolve(), excel_path.stat().st_size)
-
-    log.info("Sending Excel workbook to Telegram...")
-    usable = sum(1 for r in ranked if r.get("opportunity_score") is not None)
-    caption = (
-        f"EGX Weekly V2.6 Fundamental Research — {date.today().strftime('%d %b %Y')} "
-        f"({usable}/{len(ranked)} scored)"
-    )
-    send_document(str(excel_path), caption=caption)
-
-    log.info("Sending short text summary too...")
-    messages = build_report(ranked, top_n=10)
-    send_messages(messages)
-
-    log.info("Done.")
-
-
-if __name__ == "__main__":
-    main()
+    members=get_universe()
+    tickers=sorted({m.ticker for m in members if m.active})
+    if len(tickers) != 100 or len(tickers) != len(set(tickers)):
+        raise ValueError(f"V3 universe integrity failure: expected 100 unique tickers, got {len(tickers)}")
+    log.info("V3 universe: %s unique tickers",len(tickers))
+    all_cf=fetch_universe(tickers)
+    ranked=rank_v3(all_cf)
+    out=Path("output"); out.mkdir(exist_ok=True)
+    excel=out/f"egx_weekly_v3_report_{date.today().isoformat()}.xlsx"
+    history=append_snapshot(ranked)
+    build_excel_v3(ranked,str(excel),str(history),"data/universe_history.csv")
+    if not excel.exists() or excel.stat().st_size==0: raise FileNotFoundError(str(excel))
+    usable=sum(r.get("opportunity_score") is not None for r in ranked)
+    send_document(str(excel),caption=f"EGX Weekly V3 Fundamental Research — {date.today():%d %b %Y} ({usable}/{len(ranked)} scored)")
+    send_messages(build_report(ranked,top_n=10))
+    log.info("V3 complete: %s",excel)
+if __name__=="__main__": main()

@@ -177,3 +177,15 @@ OPPORTUNITY_WEIGHTS = {
     "quality": 0.25,
     "confidence": 0.25,
 }
+
+
+# --- V3 sector valuation controls ---
+V3_EXPLICIT_YEARS = 5
+V3_TERMINAL_GROWTH = 0.07
+V3_DDM_GROWTH = 0.06
+V3_DEFAULT_RETENTION = 0.50
+# Only explicit pure/holding-company names are placed here until a full
+# corporate-structure registry is built. SOTP values are never fabricated.
+HOLDING_COMPANY_TICKERS = {"CCAP", "OIH"}
+SOTP_COMPONENTS = {}
+V3_ASSUMPTIONS_AS_OF = "2026-09-26"
