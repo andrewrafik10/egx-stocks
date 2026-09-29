@@ -12,6 +12,7 @@ from pathlib import Path
 import json
 import config
 from v2_engine import macro_sector, metrics, build_peer_stats, _cost_of_equity, _safe_div
+import investingpro
 
 def v3_sector(cf,ticker):
     s=macro_sector(cf,ticker)
@@ -156,8 +157,9 @@ def applicable_v3(cf,ticker,sector):
         return ["sotp","pe","pb"]
     return ["pe","dcf","ev_ebitda"]
 
-def score_one_v3(ticker,cf,peer_stats):
+def score_one_v3(ticker,cf,peer_stats,investingpro_data=None):
     sector=v3_sector(cf,ticker); sector_source,sector_confidence=sector_provenance(cf,ticker); peers=peer_stats.get(macro_sector(cf,ticker),{})
+    ip=(investingpro_data or {}).get(ticker,{})
     m=metrics(cf); vals=valuation_v3(cf,ticker,sector,peers)
     applicable=applicable_v3(cf,ticker,sector)
     valid=[vals[k] for k in applicable if vals.get(k) is not None and vals[k]>0]
@@ -202,12 +204,14 @@ def score_one_v3(ticker,cf,peer_stats):
       "valuation_coverage":coverage,"red_flags":flags,
       "research_status":"Review Required" if flags else "Quantitative Pass", "research_signal":signal,
       "dividend_per_share":getattr(cf,"dividend_per_share",None),"dividend_payout_ratio":getattr(cf,"dividend_payout_ratio",None),
-      "discount_rate":_cost_of_equity(cf)[0],"discount_rate_source":_cost_of_equity(cf)[1]
+      "discount_rate":_cost_of_equity(cf)[0],"discount_rate_source":_cost_of_equity(cf)[1],
+      "investingpro_fair_value":ip.get("fair_value"),"investingpro_fair_value_upside":ip.get("fair_value_upside"),"investingpro_as_of_date":ip.get("as_of_date"),"investingpro_source":ip.get("source"),"investingpro_status":ip.get("verification_status")
     }
 
 def rank_v3(all_cf):
     peers=_peer_stats_v3(all_cf)
-    rows=[score_one_v3(t,cf,peers) for t,cf in all_cf.items()]
+    ip=investingpro.load()
+    rows=[score_one_v3(t,cf,peers,ip) for t,cf in all_cf.items()]
     rows.sort(key=lambda r:(r["opportunity_score"] is None,-(r["opportunity_score"] or -999)))
     for i,r in enumerate(rows,1): r["rank"]=i
     return rows
