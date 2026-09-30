@@ -1,101 +1,101 @@
 ticker,symbol,market,index,source
-COMI,COMI.CA,EGX,EGX100 EWI,September 2026 working universe
-SWDY,SWDY.CA,EGX,EGX100 EWI,September 2026 working universe
-ETEL,ETEL.CA,EGX,EGX100 EWI,September 2026 working universe
-EGAL,EGAL.CA,EGX,EGX100 EWI,September 2026 working universe
-MFPC,MFPC.CA,EGX,EGX100 EWI,September 2026 working universe
-QNBE,QNBE.CA,EGX,EGX100 EWI,September 2026 working universe
-ABUK,ABUK.CA,EGX,EGX100 EWI,September 2026 working universe
-HDBK,HDBK.CA,EGX,EGX100 EWI,September 2026 working universe
-EAST,EAST.CA,EGX,EGX100 EWI,September 2026 working universe
-ALCN,ALCN.CA,EGX,EGX100 EWI,September 2026 working universe
-ORAS,ORAS.CA,EGX,EGX100 EWI,September 2026 working universe
-EFIH,EFIH.CA,EGX,EGX100 EWI,September 2026 working universe
-EMFD,EMFD.CA,EGX,EGX100 EWI,September 2026 working universe
-ADIB,ADIB.CA,EGX,EGX100 EWI,September 2026 working universe
-FWRY,FWRY.CA,EGX,EGX100 EWI,September 2026 working universe
-SCTS,SCTS.CA,EGX,EGX100 EWI,September 2026 working universe
-ORHD,ORHD.CA,EGX,EGX100 EWI,September 2026 working universe
-EFID,EFID.CA,EGX,EGX100 EWI,September 2026 working universe
-CANA,CANA.CA,EGX,EGX100 EWI,September 2026 working universe
-OCDI,OCDI.CA,EGX,EGX100 EWI,September 2026 working universe
-PHDC,PHDC.CA,EGX,EGX100 EWI,September 2026 working universe
-JUFO,JUFO.CA,EGX,EGX100 EWI,September 2026 working universe
-HRHO,HRHO.CA,EGX,EGX100 EWI,September 2026 working universe
-GBCO,GBCO.CA,EGX,EGX100 EWI,September 2026 working universe
-HELI,HELI.CA,EGX,EGX100 EWI,September 2026 working universe
-CIEB,CIEB.CA,EGX,EGX100 EWI,September 2026 working universe
-BTFH,BTFH.CA,EGX,EGX100 EWI,September 2026 working universe
-FAIT,FAIT.CA,EGX,EGX100 EWI,September 2026 working universe
-RAYA,RAYA.CA,EGX,EGX100 EWI,September 2026 working universe
-CCAP,CCAP.CA,EGX,EGX100 EWI,September 2026 working universe
-FERC,FERC.CA,EGX,EGX100 EWI,September 2026 working universe
-EXPA,EXPA.CA,EGX,EGX100 EWI,September 2026 working universe
-ARCC,ARCC.CA,EGX,EGX100 EWI,September 2026 working universe
-IRON,IRON.CA,EGX,EGX100 EWI,September 2026 working universe
-EGCH,EGCH.CA,EGX,EGX100 EWI,September 2026 working universe
-SCEM,SCEM.CA,EGX,EGX100 EWI,September 2026 working universe
-BIOC,BIOC.CA,EGX,EGX100 EWI,September 2026 working universe
-CLHO,CLHO.CA,EGX,EGX100 EWI,September 2026 working universe
-VALU,VALU.CA,EGX,EGX100 EWI,September 2026 working universe
-MCQE,MCQE.CA,EGX,EGX100 EWI,September 2026 working universe
-MBSC,MBSC.CA,EGX,EGX100 EWI,September 2026 working universe
-CIRA,CIRA.CA,EGX,EGX100 EWI,September 2026 working universe
-EFIC,EFIC.CA,EGX,EGX100 EWI,September 2026 working universe
-PHAR,PHAR.CA,EGX,EGX100 EWI,September 2026 working universe
-TAQA,TAQA.CA,EGX,EGX100 EWI,September 2026 working universe
-SKPC,SKPC.CA,EGX,EGX100 EWI,September 2026 working universe
-MTIE,MTIE.CA,EGX,EGX100 EWI,September 2026 working universe
-POUL,POUL.CA,EGX,EGX100 EWI,September 2026 working universe
-ORWE,ORWE.CA,EGX,EGX100 EWI,September 2026 working universe
-EGTS,EGTS.CA,EGX,EGX100 EWI,September 2026 working universe
-UBEE,UBEE.CA,EGX,EGX100 EWI,September 2026 working universe
-MASR,MASR.CA,EGX,EGX100 EWI,September 2026 working universe
-AMOC,AMOC.CA,EGX,EGX100 EWI,September 2026 working universe
-EGSA,EGSA.CA,EGX,EGX100 EWI,September 2026 working universe
-SAUD,SAUD.CA,EGX,EGX100 EWI,September 2026 working universe
-NIPH,NIPH.CA,EGX,EGX100 EWI,September 2026 working universe
-MOIL,MOIL.CA,EGX,EGX100 EWI,September 2026 working universe
-ATQA,ATQA.CA,EGX,EGX100 EWI,September 2026 working universe
-KORA,KORA.CA,EGX,EGX100 EWI,September 2026 working universe
-AMES,AMES.CA,EGX,EGX100 EWI,September 2026 working universe
-MHOT,MHOT.CA,EGX,EGX100 EWI,September 2026 working universe
-EGBE,EGBE.CA,EGX,EGX100 EWI,September 2026 working universe
-TALM,TALM.CA,EGX,EGX100 EWI,September 2026 working universe
-ISPH,ISPH.CA,EGX,EGX100 EWI,September 2026 working universe
-CICH,CICH.CA,EGX,EGX100 EWI,September 2026 working universe
-RMDA,RMDA.CA,EGX,EGX100 EWI,September 2026 working universe
-CSAG,CSAG.CA,EGX,EGX100 EWI,September 2026 working universe
-OIH,OIH.CA,EGX,EGX100 EWI,September 2026 working universe
-BINV,BINV.CA,EGX,EGX100 EWI,September 2026 working universe
-IFAP,IFAP.CA,EGX,EGX100 EWI,September 2026 working universe
-MOIN,MOIN.CA,EGX,EGX100 EWI,September 2026 working universe
-ZMID,ZMID.CA,EGX,EGX100 EWI,September 2026 working universe
-AMIA,AMIA.CA,EGX,EGX100 EWI,September 2026 working universe
-MPCI,MPCI.CA,EGX,EGX100 EWI,September 2026 working universe
-MIPH,MIPH.CA,EGX,EGX100 EWI,September 2026 working universe
-OLFI,OLFI.CA,EGX,EGX100 EWI,September 2026 working universe
-MPRC,MPRC.CA,EGX,EGX100 EWI,September 2026 working universe
-SUGR,SUGR.CA,EGX,EGX100 EWI,September 2026 working universe
-ISMQ,ISMQ.CA,EGX,EGX100 EWI,September 2026 working universe
-PRDC,PRDC.CA,EGX,EGX100 EWI,September 2026 working universe
-BONY,BONY.CA,EGX,EGX100 EWI,September 2026 working universe
-EGAS,EGAS.CA,EGX,EGX100 EWI,September 2026 working universe
-AXPH,AXPH.CA,EGX,EGX100 EWI,September 2026 working universe
-PHTV,PHTV.CA,EGX,EGX100 EWI,September 2026 working universe
-CPCI,CPCI.CA,EGX,EGX100 EWI,September 2026 working universe
-DOMT,DOMT.CA,EGX,EGX100 EWI,September 2026 working universe
-NAPR,NAPR.CA,EGX,EGX100 EWI,September 2026 working universe
-ENGC,ENGC.CA,EGX,EGX100 EWI,September 2026 working universe
-SPHT,SPHT.CA,EGX,EGX100 EWI,September 2026 working universe
-ARAB,ARAB.CA,EGX,EGX100 EWI,September 2026 working universe
-OCPH,OCPH.CA,EGX,EGX100 EWI,September 2026 working universe
-SVCE,SVCE.CA,EGX,EGX100 EWI,September 2026 working universe
-CNFN,CNFN.CA,EGX,EGX100 EWI,September 2026 working universe
-MICH,MICH.CA,EGX,EGX100 EWI,September 2026 working universe
-ALRA,ALRA.CA,EGX,EGX100 EWI,September 2026 working universe
-ELKA,ELKA.CA,EGX,EGX100 EWI,September 2026 working universe
-GDWA,GDWA.CA,EGX,EGX100 EWI,September 2026 working universe
-GPIM,GPIM.CA,EGX,EGX100 EWI,September 2026 working universe
-GOUR,GOUR.CA,EGX,EGX100 EWI,September 2026 working universe
-ELEC,ELEC.CA,EGX,EGX100 EWI,September 2026 working universe
+COMI,COMI.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+SWDY,SWDY.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+ETEL,ETEL.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+EGAL,EGAL.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+MFPC,MFPC.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+QNBE,QNBE.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+ABUK,ABUK.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+HDBK,HDBK.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+EAST,EAST.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+ALCN,ALCN.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+ORAS,ORAS.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+EFIH,EFIH.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+EMFD,EMFD.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+ADIB,ADIB.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+FWRY,FWRY.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+SCTS,SCTS.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+ORHD,ORHD.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+EFID,EFID.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+CANA,CANA.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+OCDI,OCDI.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+PHDC,PHDC.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+JUFO,JUFO.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+HRHO,HRHO.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+GBCO,GBCO.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+HELI,HELI.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+CIEB,CIEB.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+BTFH,BTFH.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+FAIT,FAIT.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+RAYA,RAYA.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+CCAP,CCAP.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+FERC,FERC.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+EXPA,EXPA.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+ARCC,ARCC.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+IRON,IRON.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+EGCH,EGCH.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+SCEM,SCEM.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+CLHO,CLHO.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+VALU,VALU.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+MCQE,MCQE.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+MBSC,MBSC.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+CIRA,CIRA.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+EFIC,EFIC.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+PHAR,PHAR.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+TAQA,TAQA.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+SKPC,SKPC.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+MTIE,MTIE.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+POUL,POUL.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+ORWE,ORWE.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+EGTS,EGTS.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+UBEE,UBEE.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+MASR,MASR.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+AMOC,AMOC.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+EGSA,EGSA.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+SAUD,SAUD.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+NIPH,NIPH.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+MOIL,MOIL.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+ATQA,ATQA.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+KORA,KORA.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+AMES,AMES.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+MHOT,MHOT.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+EGBE,EGBE.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+ISPH,ISPH.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+CICH,CICH.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+RMDA,RMDA.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+CSAG,CSAG.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+OIH,OIH.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+BINV,BINV.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+MOIN,MOIN.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+ZMID,ZMID.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+AMIA,AMIA.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+MPCI,MPCI.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+MIPH,MIPH.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+OLFI,OLFI.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+MPRC,MPRC.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+SUGR,SUGR.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+ISMQ,ISMQ.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+PRDC,PRDC.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+BONY,BONY.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+EGAS,EGAS.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+AXPH,AXPH.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+PHTV,PHTV.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+CPCI,CPCI.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+DOMT,DOMT.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+NAPR,NAPR.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+ENGC,ENGC.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+SPHT,SPHT.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+ARAB,ARAB.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+OCPH,OCPH.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+SVCE,SVCE.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+CNFN,CNFN.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+MICH,MICH.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+ALRA,ALRA.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+ELKA,ELKA.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+GDWA,GDWA.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+GPIM,GPIM.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+GOUR,GOUR.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+ELEC,ELEC.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+AIFI,AIFI.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+ACTF,ACTF.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
+TMGH,TMGH.CA,EGX,EGX100 EWI,September 2026 EGX review corrected universe
