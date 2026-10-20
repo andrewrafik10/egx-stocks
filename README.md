@@ -70,3 +70,31 @@ every Friday via GitHub Actions.
   file committed back to the repo, or in a small SQLite DB)
 - Feed the same fundamentals into your Excel-based sensitivity tables
   for names that make the top 15
+
+
+## Portfolio backtest (exploratory)
+
+Run the top-10 equal-weight portfolio evaluation with an estimated 25 bps per
+side cost assumption:
+
+```bash
+python portfolio_backtest.py
+```
+
+Outputs are written to `output/backtest/`:
+- `portfolio_summary.json`
+- `portfolio_periods.csv`
+- `portfolio_holdings.csv`
+
+The strategy ranks stocks by the stored `opportunity_score`, holds the top 10
+until the next recorded signal snapshot, and estimates rebalance costs from
+portfolio turnover. Optional benchmark data can be supplied in
+`data/egx100_history.csv` with columns `as_of_date,close`.
+
+**Important limitation:** the current `data/history.csv` contains only a handful
+of signal dates, not a full year. The script therefore flags results as
+exploratory and does not treat sparse snapshots as evidence of a valid annual
+strategy. A credible one-year test needs at least 40 weekly point-in-time
+snapshots across 300+ days, historical prices with dividends/corporate actions
+handled, and EGX100 benchmark closes for matching dates. The current 25 bps
+transaction-cost input is an assumption, not a verified broker fee schedule.
