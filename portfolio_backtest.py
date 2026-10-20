@@ -112,8 +112,8 @@ def run(history_path=DEFAULT_HISTORY, benchmark_path=DEFAULT_BENCHMARK,
             continue
         target_weights = {r["ticker"]: 1.0 / len(selected) for r in selected}
 
-        # Turnover is half the sum of absolute changes in portfolio weights,
-        # including names sold and names bought. Initial deployment is turnover 1.
+        # Compare target weights with drifted weights after the previous holding
+        # period. Initial deployment is turnover 1.0 (100% of capital invested).
         names = set(previous_weights) | set(target_weights)
         turnover = 0.5 * sum(abs(target_weights.get(t, 0.0) -
                                  previous_weights.get(t, 0.0)) for t in names)
@@ -124,6 +124,7 @@ def run(history_path=DEFAULT_HISTORY, benchmark_path=DEFAULT_BENCHMARK,
         next_prices = {r["ticker"]: r["_price"] for r in dates[next_date]}
         weighted_return = 0.0
         actual_weight = 0.0
+        realized_stock_returns = {}
         for row in selected:
             ticker = row["ticker"]
             exit_price = next_prices.get(ticker)
@@ -142,11 +143,22 @@ def run(history_path=DEFAULT_HISTORY, benchmark_path=DEFAULT_BENCHMARK,
             if stock_return is not None:
                 weighted_return += weight * stock_return
                 actual_weight += weight
+                realized_stock_returns[ticker] = stock_return
 
         # Do not silently treat missing holdings as cash: normalize the observed
         # portion and flag coverage. This is descriptive, not a tradable result.
         gross_return = weighted_return / actual_weight if actual_weight else 0.0
         net_return = (1.0 + gross_return) * (1.0 - transaction_cost) - 1.0
+
+        # Carry actual weights forward after price drift; missing-price positions
+        # are excluded from the drift calculation and reflected in coverage.
+        drifted = {}
+        for ticker, weight in target_weights.items():
+            if ticker in realized_stock_returns:
+                drifted[ticker] = weight * (1.0 + realized_stock_returns[ticker])
+        drift_total = sum(drifted.values())
+        previous_weights = ({ticker: weight / drift_total for ticker, weight in drifted.items()}
+                            if drift_total > 0 else {})
         equity *= (1.0 + net_return)
         returns.append(net_return)
         cumulative.append(equity)
@@ -171,7 +183,6 @@ def run(history_path=DEFAULT_HISTORY, benchmark_path=DEFAULT_BENCHMARK,
             "cumulative_equity": equity,
             "benchmark_return": bench_return,
         })
-        previous_weights = target_weights
 
     total_return = equity - 1.0
     n = len(returns)
