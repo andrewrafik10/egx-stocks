@@ -193,6 +193,20 @@ def score_one_v3(ticker,cf,peer_stats,investingpro_data=None):
     if cf.book_value_per_share is None: flags.append("Missing BVPS")
     if cf.free_cash_flow is not None and cf.free_cash_flow<0: flags.append("Negative free cash flow")
     signal=research_signal(label, coverage, dispersion, flags)
+    # Transparent Data Quality Score: completeness, method coverage,
+    # sector provenance and source confidence, with a modest red-flag penalty.
+    sector_data_score={"High":100,"Medium":70,"Low":30}.get(sector_confidence,30)
+    source_data_score=60 if "StockAnalysis" in "StockAnalysis.com scrape" else 40
+    data_quality=max(0,min(100,round(
+        completeness*0.40 + coverage*100*0.30 +
+        sector_data_score*0.15 + source_data_score*0.15 -
+        min(20,len(flags)*3),1)))
+    if data_quality>=80 and label=="High":
+        data_quality_label="Strong"
+    elif data_quality>=65:
+        data_quality_label="Acceptable"
+    else:
+        data_quality_label="Limited"
     return {
       "version":"V3","ticker":ticker,"company_name":cf.company_name,"price":cf.price,"sector":sector,
       "sector_source":sector_source,"sector_confidence":sector_confidence,
@@ -200,7 +214,7 @@ def score_one_v3(ticker,cf,peer_stats,investingpro_data=None):
       "metrics":m,"peer":peers,"valuations":vals,"applicable_methods":applicable,"methods_used":len(valid),
       "fair_value_bear":bear,"fair_value_base":base,"fair_value_bull":bull,"dispersion":dispersion,
       "valuation_score":valuation_score,"quality_score":quality,"confidence_score":round(confidence,1),
-      "confidence":label,"opportunity_score":opportunity,"data_completeness":completeness,
+      "confidence":label,"opportunity_score":opportunity,"data_quality_score":data_quality,"data_quality_label":data_quality_label,"data_completeness":completeness,
       "valuation_coverage":coverage,"red_flags":flags,
       "research_status":"Review Required" if flags else "Quantitative Pass", "research_signal":signal,
       "dividend_per_share":getattr(cf,"dividend_per_share",None),"dividend_payout_ratio":getattr(cf,"dividend_payout_ratio",None),
