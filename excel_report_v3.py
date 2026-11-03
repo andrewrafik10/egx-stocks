@@ -119,7 +119,7 @@ def build_excel_v3(rows, output_path, history_path="data/history_v3.csv", univer
     for r in rows:
         m=r.get("metrics") or {}
         data.append([r.get("rank"),r["ticker"],r.get("company_name") or "",r.get("sector"),r.get("price"),r.get("fair_value_base"),_upside(r),m.get("pe"),m.get("pb"),m.get("roe"),m.get("eps_growth"),m.get("revenue_growth"),m.get("debt_equity"),m.get("fcf_margin"),r.get("quality_score"),_quality(r),r.get("confidence"),r.get("research_signal")])
-    _write_rows(sa,data); _format(sa,percent_cols=(7,10,11,12,13,14),decimal_cols=(5,6,8,9),score_cols=(15,16))
+    _write_rows(sa,data); _format(sa,percent_cols=(7,10,11,12,14),decimal_cols=(5,6,8,9,13),score_cols=(15,16))
     for col,w in enumerate([8,11,27,22,13,14,14,10,10,11,13,15,14,13,13,13,13,27],1): sa.column_dimensions[get_column_letter(col)].width=w
 
     # 4. Valuation Comparison — V3 vs InvestingPro, without confusing target prices with FV.
