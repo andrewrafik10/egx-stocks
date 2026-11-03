@@ -3,7 +3,7 @@ from pathlib import Path
 from datetime import date
 import csv
 
-FIELDS=["as_of_date","version","ticker","company_name","sector","sector_source","sector_confidence","data_source","price","fair_value_bear","fair_value_base","fair_value_bull","base_upside","dispersion","valuation_score","quality_score","confidence_score","confidence","opportunity_score","data_completeness","valuation_coverage","methods_used","applicable_methods","research_status","research_signal","red_flags","pe","pb","residual_income","ddm","dcf","ev_ebitda","book_nav_proxy","sotp","roe","eps_growth","revenue_growth","beta","dividend_per_share","dividend_payout_ratio","discount_rate","discount_rate_source","investingpro_fair_value","investingpro_fair_value_upside","investingpro_as_of_date","investingpro_source","investingpro_status"]
+FIELDS=["as_of_date","version","ticker","company_name","sector","sector_source","sector_confidence","data_source","price","fair_value_bear","fair_value_base","fair_value_bull","base_upside","dispersion","valuation_score","quality_score","confidence_score","confidence","opportunity_score","data_quality_score","data_quality_label","data_completeness","valuation_coverage","methods_used","applicable_methods","research_status","research_signal","red_flags","pe","pb","residual_income","ddm","dcf","ev_ebitda","book_nav_proxy","sotp","roe","eps_growth","revenue_growth","beta","dividend_per_share","dividend_payout_ratio","discount_rate","discount_rate_source","investingpro_fair_value","investingpro_fair_value_upside","investingpro_as_of_date","investingpro_source","investingpro_status"]
 
 def append_snapshot(rows,path="data/history_v3.csv"):
     p=Path(path); p.parent.mkdir(parents=True,exist_ok=True); existing={}
@@ -19,7 +19,7 @@ def append_snapshot(rows,path="data/history_v3.csv"):
           "fair_value_base":base,"fair_value_bull":r.get("fair_value_bull"),
           "base_upside":((base-r["price"])/r["price"] if base and r.get("price") else None),
           "dispersion":r.get("dispersion"),"valuation_score":r.get("valuation_score"),"quality_score":r.get("quality_score"),
-          "confidence_score":r.get("confidence_score"),"confidence":r.get("confidence"),"opportunity_score":r.get("opportunity_score"),
+          "confidence_score":r.get("confidence_score"),"confidence":r.get("confidence"),"opportunity_score":r.get("opportunity_score"),"data_quality_score":r.get("data_quality_score"),"data_quality_label":r.get("data_quality_label"),
           "data_completeness":r.get("data_completeness"),"valuation_coverage":r.get("valuation_coverage"),
           "methods_used":r.get("methods_used"),"applicable_methods":",".join(r.get("applicable_methods",[])),
           "research_status":r.get("research_status"),"research_signal":r.get("research_signal"),"red_flags":"; ".join(r.get("red_flags",[])),
